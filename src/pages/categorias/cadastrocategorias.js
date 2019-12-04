@@ -4,7 +4,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'controlegastos.db' });
 
-export default class CadastroGrupos extends React.Component {
+export default class CadastroCategorias extends React.Component {
 
     constructor(props) {
         super(props);
@@ -16,7 +16,7 @@ export default class CadastroGrupos extends React.Component {
 
     }
 
-    cadastrarGrupo = () => {
+    cadastrarCategoria = () => {
 
         let navigation = this.props.navigation;
 
@@ -25,16 +25,16 @@ export default class CadastroGrupos extends React.Component {
             const { id } = this.state;
             const { descricao } = this.state;
 
-            let sql = 'insert into tb_grupos(id_grupo,tx_descricao) values(?,?)';
+            let sql = 'insert into tb_categorias(id_categoria,tx_descricao) values(?,?)';
             const params = [id, descricao];
 
             if (this.state.id) {
-                sql = 'update tb_grupos set tx_descricao=? where id_grupo=?';
+                sql = 'update tb_categorias set tx_descricao=? where id_categoria=?';
                 params = [descricao, id]
             }
            
             tx.executeSql(sql, params, (tx, results) => {
-                navigation.navigate('Grupos');
+                navigation.navigate('Categorias');
             });
         });
     }
@@ -44,16 +44,16 @@ export default class CadastroGrupos extends React.Component {
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.navigate('Grupos')} />
+                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.navigate('Categorias')} />
                     </Left>
                     <Body style={{ flex: 1 }}>
-                        <Title>Cadastrar Grupo</Title>
+                        <Title>Cadastrar Categoria</Title>
                     </Body>
                 </Header>
                 <Content >
                     <Form>
                         <Item stackedLabel>
-                            <Label>Grupo</Label>
+                            <Label>Categoria</Label>
                             <Input
                                 value={this.state.descricao}
                                 onChange={(e) => this.setState({ descricao: e.nativeEvent.text })}
@@ -63,7 +63,7 @@ export default class CadastroGrupos extends React.Component {
 
                 </Content>
                 <Footer>
-                    <Button onPress={() => this.cadastrarGrupo()}>
+                    <Button onPress={() => this.cadastrarCategoria()}>
                         <Text>Salvar</Text>
                     </Button>
                 </Footer>

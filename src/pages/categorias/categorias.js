@@ -7,7 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const db = openDatabase({ name: 'controlegastos.db' });
 
-export default class Grupos extends React.Component {
+export default class Categorias extends React.Component {
 
     constructor(props) {
         super(props);
@@ -17,7 +17,7 @@ export default class Grupos extends React.Component {
         };
 
         db.transaction(tx => {
-            tx.executeSql('SELECT * FROM tb_grupos', [], (tx, results) => {
+            tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
                 var temp = [];
 
                 for (let i = 0; i < results.rows.length; ++i) {
@@ -37,8 +37,8 @@ export default class Grupos extends React.Component {
         );
     };
 
-    abrirCadastroGrupo = () => {
-        this.props.navigation.navigate('CadastroGrupos');
+    abrirCadastroCategoria = () => {
+        this.props.navigation.navigate('CadastroCategorias');
     }
 
     render() {
@@ -49,7 +49,7 @@ export default class Grupos extends React.Component {
                         <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.openDrawer()} />
                     </Left>
                     <Body style={{ flex: 1 }}>
-                        <Title>Grupos</Title>
+                        <Title>Categorias</Title>
                     </Body>
                 </Header>
                 <View style={{ flex: 1 }}>
@@ -90,7 +90,7 @@ export default class Grupos extends React.Component {
                         containerStyle={{}}
                         style={{ backgroundColor: '#5067FF' }}
                         position="bottomRight"
-                        onPress={() => this.abrirCadastroGrupo()}>
+                        onPress={() => this.abrirCadastroCategoria()}>
                         <Icon name="add" />
 
                     </Fab>

@@ -9,8 +9,8 @@ export default class App extends React.Component {
         var db = openDatabase({ name: 'controlegastos.db' });
 
         var tables = [{
-            name: 'tb_grupos',
-            sql: 'CREATE TABLE IF NOT EXISTS tb_grupos(id_grupo INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))'
+            name: 'tb_categorias',
+            sql: 'CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))'
         }];
 
 
