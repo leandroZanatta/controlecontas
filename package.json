@@ -13,11 +13,13 @@
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-native": "0.61.5",
+    "react-native-fab": "^1.0.9",
     "react-native-gesture-handler": "^1.5.1",
     "react-native-reanimated": "^1.4.0",
     "react-native-sqlite-storage": "^4.1.0",
     "react-navigation": "^4.0.10",
-    "react-navigation-drawer": "^2.3.3"
+    "react-navigation-drawer": "^2.3.3",
+    "react-navigation-stack": "^1.10.3"
   },
   "devDependencies": {
     "@babel/core": "7.7.4",
