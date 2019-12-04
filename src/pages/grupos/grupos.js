@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
 import { Body, Header, Left, Title, Icon, Footer, Fab, Button, Container } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const db = openDatabase({ name: 'controlegastos.db' });
 
@@ -51,16 +53,36 @@ export default class Grupos extends React.Component {
                     </Body>
                 </Header>
                 <View style={{ flex: 1 }}>
-                    <FlatList
+                    <SwipeListView
                         data={this.state.items}
                         ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View key={item.id_grupo} style={{ backgroundColor: 'white', padding: 20 }}>
-                                <Text>Id: {item.id_grupo}</Text>
-                                <Text>Descricao: {item.tx_descricao}</Text>
+                                <Text> {item.tx_descricao}</Text>
                             </View>
                         )}
+                        renderHiddenItem={(data, rowMap) => (
+                            <View style={{
+                                alignItems: 'center',
+                                backgroundColor: '#FFF',
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Button light
+                                    onPress={() => alert('teste')}>
+                                    <Icon name='trash' />
+                                </Button>
+
+                                <Button light
+                                    onPress={() => alert('teste')}>
+                                    <Icon name='trash' />
+                                </Button>
+                            </View>
+                        )}
+                        leftOpenValue={75}
+                        rightOpenValue={-75}
                     />
                     <Fab
                         active={this.state.active}

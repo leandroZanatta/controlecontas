@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { View } from 'react-native';
 import { Body, Header, Left, Title, Icon, Container, Form, Item, Label, Input, Content, Button, Text, Footer } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
-
 
 const db = openDatabase({ name: 'controlegastos.db' });
 

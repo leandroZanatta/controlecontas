@@ -1,9 +1,9 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import Home from './pages/home';
+import Home from './pages/home/home';
 import SideMenu from './components/menu/sidemenu';
-import Grupos from './pages/grupos';
-import CadastroGrupos from './pages/cadastrogrupos';
+import Grupos from './pages/grupos/grupos';
+import CadastroGrupos from './pages/grupos/cadastrogrupos';
 
 const HomeNavigator = createSwitchNavigator({
     Grupos: Grupos,
