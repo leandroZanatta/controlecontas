@@ -10,7 +10,10 @@ export default class App extends React.Component {
 
         var tables = [{
             name: 'tb_categorias',
-            sql: 'CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))'
+            sql: ['CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))']
+        },{
+            name: 'tb_contas',
+            sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT, cd_categoria integer not null, cd_tipoconta integer not null, tx_descricao VARCHAR(255))']
         }];
 
 
@@ -28,7 +31,8 @@ export default class App extends React.Component {
 
                         if (rowsInDatabase.findIndex(function (row) { return row === table.name }) < 0) {
 
-                            txn.executeSql(table.sql, []);
+                            table.sql.forEach(query=>{ txn.executeSql(query, [])})
+                           
                         }
 
                     });
