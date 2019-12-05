@@ -18,7 +18,7 @@ export default class Contas extends React.Component {
         };
 
         db.transaction(tx => {
-            tx.executeSql('SELECT * FROM tb_contas', [], (tx, results) => {
+            tx.executeSql('SELECT * FROM tb_contas order by cd_tipoconta desc,tx_descricao asc', [], (tx, results) => {
                 var temp = [];
 
                 for (let i = 0; i < results.rows.length; ++i) {

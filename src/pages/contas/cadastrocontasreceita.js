@@ -14,7 +14,7 @@ export default class CadastroContasReceita extends React.Component {
             id: null,
             categoria: 0,
             descricao: '',
-            tipoConta: 1
+            tipoConta: 0
         }
     }
 
@@ -96,6 +96,20 @@ export default class CadastroContasReceita extends React.Component {
                                 value={this.state.descricao}
                                 onChange={(e) => this.setState({ descricao: e.nativeEvent.text })}
                             />
+                        </Item>
+                        <Item picker>
+                            <Label>Tipo de Conta</Label>
+                            <Picker
+                                mode="dropdown"
+                                iosIcon={<Icon name="arrow-down" />}
+                                style={{ width: undefined }}
+                                selectedValue={this.state.tipoConta}
+                                onValueChange={(e) => this.setState({ tipoConta: e })}
+                            >
+                             <Picker.Item label='Despesa' value={0} key={0} />
+                             <Picker.Item label='Receita' value={1} key={1} />
+
+                            </Picker>
                         </Item>
                     </Form>
                 </Content>
