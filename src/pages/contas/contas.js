@@ -96,20 +96,9 @@ export default class Contas extends React.Component {
                         containerStyle={{}}
                         style={{ backgroundColor: '#5067FF' }}
                         position="bottomRight"
-                        onPress={() => this.setState({ active: !this.state.active })}>
+                        onPress={() => this.props.navigation.navigate('CadastroContas')}>
                         <Icon name="add" />
 
-                        <Button
-                            style={{ backgroundColor: '#0081BD' }}
-                            onPress={() => this.props.navigation.navigate('CadastroContasReceita')}
-                        >
-                            <Icon name="add" />
-                        </Button>
-                        <Button
-                            style={{ backgroundColor: 'red' }}
-                            onPress={() => this.props.navigation.navigate('CadastroContasDespesa')}>
-                            <Icon name="add" />
-                        </Button>
                     </Fab>
                 </View>
             </Container>

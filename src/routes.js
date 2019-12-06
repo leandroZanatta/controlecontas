@@ -3,10 +3,11 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import Home from './pages/home/home';
 import SideMenu from './components/menu/sidemenu';
 import Contas from './pages/contas/contas';
-import CadastroContasDespesa from './pages/contas/cadastrocontasdespesa';
-import CadastroContasReceita from './pages/contas/cadastrocontasreceita';
+import CadastroContas from './pages/contas/cadastrocontas';
 import Categorias from './pages/categorias/categorias';
 import CadastroCategorias from './pages/categorias/cadastrocategorias';
+import Lancamentos from './pages/lancamentos/lancamentos';
+import CadastroReceitas from './pages/lancamentos/cadastroreceitas';
 
 const CategoriasNavigator = createSwitchNavigator({
     Categorias: Categorias,
@@ -15,14 +16,19 @@ const CategoriasNavigator = createSwitchNavigator({
 
 const ContasNavigator = createSwitchNavigator({
     Contas: Contas,
-    CadastroContasDespesa: CadastroContasDespesa,
-    CadastroContasReceita: CadastroContasReceita,
+    CadastroContas: CadastroContas,
+});
+
+const LancamentosNavigator = createSwitchNavigator({
+    Lancamentos: Lancamentos,
+    CadastroReceitas: CadastroReceitas
 });
 
 const AppDrawerNavigator = createDrawerNavigator({
     Home: Home,
     Categorias: CategoriasNavigator,
-    Contas: ContasNavigator
+    Contas: ContasNavigator,
+    Lançamentos: LancamentosNavigator
 }, {
     contentComponent: SideMenu
 });

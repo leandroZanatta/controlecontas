@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Picker, Label, Input } from 'native-base';
+import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, Input } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'controlegastos.db' });
 
-export default class CadastroContasDespesa extends React.Component {
+export default class CadastroContas extends React.Component {
 
     constructor(props) {
         super(props);
@@ -35,7 +35,7 @@ export default class CadastroContasDespesa extends React.Component {
         });
     }
 
-    cadastrarDespesa = () => {
+    cadastrarReceita = () => {
 
         let navigation = this.props.navigation;
 
@@ -59,22 +59,33 @@ export default class CadastroContasDespesa extends React.Component {
             });
         });
     }
-
-
     render() {
-
         return (
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.navigate('Contas')} />
+                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Contas')} />
                     </Left>
                     <Body style={{ flex: 1 }}>
-                        <Title>Despesas</Title>
+                        <Title>Receita</Title>
                     </Body>
                 </Header>
                 <Content>
                     <Form>
+                        <Item picker>
+                            <Label>Tipo de Conta</Label>
+                            <Picker
+                                mode="dropdown"
+                                iosIcon={<Icon name="arrow-down" />}
+                                style={{ width: undefined }}
+                                selectedValue={this.state.tipoConta}
+                                onValueChange={(e) => this.setState({ tipoConta: e })}
+                            >
+                                <Picker.Item label='Despesa' value={0} key={0} />
+                                <Picker.Item label='Receita' value={1} key={1} />
+
+                            </Picker>
+                        </Item>
                         <Item picker>
                             <Label>Categoria</Label>
                             <Picker
@@ -100,10 +111,11 @@ export default class CadastroContasDespesa extends React.Component {
                                 onChange={(e) => this.setState({ descricao: e.nativeEvent.text })}
                             />
                         </Item>
+
                     </Form>
                 </Content>
                 <Footer>
-                    <Button onPress={() => this.cadastrarDespesa()}>
+                    <Button onPress={() => this.cadastrarReceita()}>
                         <Text>Salvar</Text>
                     </Button>
                 </Footer>

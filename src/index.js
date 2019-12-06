@@ -11,9 +11,15 @@ export default class App extends React.Component {
         var tables = [{
             name: 'tb_categorias',
             sql: ['CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))']
-        },{
+        }, {
             name: 'tb_contas',
-            sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT, cd_categoria integer not null, cd_tipoconta integer not null, tx_descricao VARCHAR(255))']
+            sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT,cd_categoria integer not null,cd_tipoconta integer not null,tx_descricao VARCHAR(255),FOREIGN KEY(cd_categoria) REFERENCES tb_categorias(id_categoria))']
+        }, {
+            name: 'tb_lancamentos',
+            sql: ['CREATE TABLE tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT NOT NULL,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
+        }, {
+            name: 'tb_pagamentos',
+            sql: ['CREATE TABLE tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT NOT NULL,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
         }];
 
 
@@ -31,8 +37,17 @@ export default class App extends React.Component {
 
                         if (rowsInDatabase.findIndex(function (row) { return row === table.name }) < 0) {
 
-                            table.sql.forEach(query=>{ txn.executeSql(query, [])})
-                           
+                            table.sql.forEach(query => {
+
+                                try {
+                                    txn.executeSql(query, []);
+                                }
+                                catch (e) {
+                                    alert(e);
+                                }
+
+                            })
+
                         }
 
                     });
