@@ -5,8 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 export default class App extends React.Component {
 
     componentDidMount() {
-
-        var db = openDatabase({ name: 'controlegastos.db' });
+        var db = openDatabase({ name: 'controlecontas.db' });
 
         var tables = [{
             name: 'tb_categorias',
@@ -16,14 +15,11 @@ export default class App extends React.Component {
             sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT,cd_categoria integer not null,cd_tipoconta integer not null,tx_descricao VARCHAR(255),FOREIGN KEY(cd_categoria) REFERENCES tb_categorias(id_categoria))']
         }, {
             name: 'tb_lancamentos',
-            sql: ['CREATE TABLE tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT NOT NULL,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
-        }, {
-            name: 'tb_pagamentos',
-            sql: ['CREATE TABLE tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT NOT NULL,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
+            sql: ['CREATE TABLE IF NOT EXISTS tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
         }];
 
-
         db.transaction(function (txn) {
+
             txn.executeSql("SELECT name FROM sqlite_master WHERE type='table'", [],
                 function (tx, res) {
 
@@ -39,12 +35,7 @@ export default class App extends React.Component {
 
                             table.sql.forEach(query => {
 
-                                try {
-                                    txn.executeSql(query, []);
-                                }
-                                catch (e) {
-                                    alert(e);
-                                }
+                                txn.executeSql(query, []);
 
                             })
 

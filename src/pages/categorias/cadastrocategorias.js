@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Body, Header, Left, Title, Icon, Container, Form, Item, Label, Input, Content, Button, Text, Footer } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+const db = openDatabase({ name: 'controlecontas.db' });
 
 export default class CadastroCategorias extends React.Component {
 
@@ -19,7 +19,7 @@ export default class CadastroCategorias extends React.Component {
     cadastrarCategoria = () => {
 
         let navigation = this.props.navigation;
-
+        debugger
         db.transaction(tx => {
 
             const { id } = this.state;
@@ -32,11 +32,15 @@ export default class CadastroCategorias extends React.Component {
                 sql = 'update tb_categorias set tx_descricao=? where id_categoria=?';
                 params = [descricao, id]
             }
-           
+
             tx.executeSql(sql, params, (tx, results) => {
                 navigation.navigate('Categorias');
+            }, function (error) {
+                alert(error);
             });
         });
+
+
     }
 
     render() {
@@ -44,7 +48,7 @@ export default class CadastroCategorias extends React.Component {
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.navigate('Categorias')} />
+                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Categorias')} />
                     </Left>
                     <Body style={{ flex: 1 }}>
                         <Title>Cadastrar Categoria</Title>

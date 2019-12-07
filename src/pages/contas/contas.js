@@ -4,7 +4,7 @@ import { Body, Header, Left, Title, Icon, Container, Fab, Button, Text } from 'n
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+const db = openDatabase({ name: 'controlecontas.db' });
 
 
 export default class Contas extends React.Component {

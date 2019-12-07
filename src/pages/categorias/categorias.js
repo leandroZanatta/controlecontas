@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Text, View, FlatList } from 'react-native';
-import { Body, Header, Left, Title, Icon, Footer, Fab, Button, Container } from 'native-base';
+import { Text, View } from 'react-native';
+import { Body, Header, Left, Title, Icon, Fab, Button, Container } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+const db = openDatabase({ name: 'controlecontas.db' });
 
 export default class Categorias extends React.Component {
 
@@ -15,6 +14,9 @@ export default class Categorias extends React.Component {
         this.state = {
             items: [],
         };
+    }
+
+    componentDidMount() {
 
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
@@ -42,7 +44,7 @@ export default class Categorias extends React.Component {
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.openDrawer()} />
+                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.openDrawer()} />
                     </Left>
                     <Body style={{ flex: 1 }}>
                         <Title>Categorias</Title>

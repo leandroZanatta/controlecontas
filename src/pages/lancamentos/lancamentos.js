@@ -3,8 +3,9 @@ import { View } from 'react-native';
 import { Body, Header, Left, Title, Icon, Container, Fab, Button, Text } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { openDatabase } from 'react-native-sqlite-storage';
+import moment from 'moment';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+const db = openDatabase({ name: 'controlecontas.db' });
 
 
 export default class Lancamentos extends React.Component {
@@ -16,9 +17,13 @@ export default class Lancamentos extends React.Component {
             active: false,
             items: [],
         };
+    }
+
+    componentDidMount() {
 
         db.transaction(tx => {
-            tx.executeSql('SELECT * FROM tb_lancamentos', [], (tx, results) => {
+
+            tx.executeSql('SELECT * FROM tb_lancamentos lancamentos left join tb_contas contas on lancamentos.cd_conta=contas.id_conta', [], (tx, results) => {
                 var temp = [];
 
                 for (let i = 0; i < results.rows.length; ++i) {
@@ -30,7 +35,6 @@ export default class Lancamentos extends React.Component {
                 });
             });
         });
-
     }
 
 
@@ -55,11 +59,15 @@ export default class Lancamentos extends React.Component {
                             <View key={item.id_conta}
                                 style={{
                                     backgroundColor: 'white',
-                                    padding: 20,
+                                    paddingTop: 20,
+                                    paddingBottom: 20,
                                     borderLeftColor: item.cd_tipoconta == 0 ? 'red' : 'blue',
-                                    borderLeftWidth: 5
+                                    borderLeftWidth: 5,
+                                    flexDirection:'row'
                                 }}>
+                                <Text> {moment(new Date(item.dt_lancamento)).format('DD/MM HH:mm')}</Text>
                                 <Text> {item.tx_descricao}</Text>
+                                <Text> {item.vl_parcela}</Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (

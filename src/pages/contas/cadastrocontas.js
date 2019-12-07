@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, Input } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+const db = openDatabase({ name: 'controlecontas.db' });
 
 export default class CadastroContas extends React.Component {
 
@@ -21,6 +21,7 @@ export default class CadastroContas extends React.Component {
     componentDidMount() {
 
         db.transaction(tx => {
+
             tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
                 var temp = [];
 
@@ -56,7 +57,7 @@ export default class CadastroContas extends React.Component {
 
             tx.executeSql(sql, params, (tx, results) => {
                 navigation.navigate('Contas');
-            });
+            }, function(error){ alert(errorr); });
         });
     }
     render() {

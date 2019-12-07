@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, Input } from 'native-base';
+import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 import MoneyInput from '../../components/money/moneyinput';
-import DatePicker from 'react-native-datepicker';
+import moment from 'moment';
 
-const db = openDatabase({ name: 'controlegastos.db' });
+
+const db = openDatabase({ name: 'controlecontas.db' });
+
 
 export default class CadastroReceitas extends React.Component {
 
@@ -13,7 +15,7 @@ export default class CadastroReceitas extends React.Component {
 
         this.state = {
             contas: [],
-            dataLancamento: { date: "2019-12-05" },
+            dataLancamento: { date: new Date() },
             valor: 0,
             id: null,
             conta: 0
@@ -22,10 +24,12 @@ export default class CadastroReceitas extends React.Component {
 
     componentDidMount() {
 
+
         db.transaction(tx => {
 
             tx.executeSql('SELECT * FROM tb_contas where cd_tipoconta=1', [], (tx, results) => {
                 var temp = [];
+
 
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
@@ -40,14 +44,41 @@ export default class CadastroReceitas extends React.Component {
 
     cadastrarReceita = () => {
 
-        debugger
+        let navigation = this.props.navigation;
+
+        db.transaction(tx => {
+       
+            const { id } = this.state;
+            const { dataLancamento } = this.state;
+            const { conta } = this.state;
+            const { valor } = this.state;
+
+
+            let sql = 'insert into tb_lancamentos(id_lancamento,cd_conta,dt_lancamento,vl_parcela) values(?,?,?,?)';
+            const params = [id, conta, moment().format('YYYY-MM-DD HH:mm:ss'), valor];
+
+            if (this.state.id) {
+                sql = 'update tb_lancamentos set cd_conta=?, dt_lancamento=?,  vl_parcela=? where id_lancamento=?';
+                params = [dataLancamento, conta, valor, id]
+            }
+
+            tx.executeSql(sql, params, (tx, results) => {
+                navigation.navigate('Lancamentos');
+            }, function (error) {
+                alert(error);
+            });
+        });
+
+
+
     }
+
     render() {
         return (
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Contas')} />
+                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Lancamentos')} />
                     </Left>
                     <Body style={{ flex: 1 }}>
                         <Title>Lançar Receita</Title>
@@ -73,20 +104,6 @@ export default class CadastroReceitas extends React.Component {
                                 }
 
                             </Picker>
-
-                        </Item>
-
-                        <Item stackedLabel>
-                            <Label>Data Lançamento</Label>
-                            <DatePicker
-                                style={{ width: 200 }}
-                                date={this.state.dataLancamento}
-                                mode="date"
-                                format="YYYY-MM-DD"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                onDateChange={(date) => { this.setState({ dataLancamento: date }) }}
-                            />
                         </Item>
 
                         <Item stackedLabel>
