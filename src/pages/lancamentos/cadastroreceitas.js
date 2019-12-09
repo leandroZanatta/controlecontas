@@ -24,7 +24,6 @@ export default class CadastroReceitas extends React.Component {
 
     componentDidMount() {
 
-
         db.transaction(tx => {
 
             tx.executeSql('SELECT * FROM tb_contas where cd_tipoconta=1', [], (tx, results) => {
