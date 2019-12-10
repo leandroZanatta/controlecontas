@@ -37,6 +37,14 @@ export default class Lancamentos extends React.Component {
         });
     }
 
+    formatarLancamento = (item) => {
+
+        if (item.cd_tipoconta === 0) {
+            return moment(new Date(item.dt_vencimento)).format('DD/MM HH:mm');
+        }
+        return moment(new Date(item.dt_lancamento)).format('DD/MM HH:mm');
+    }
+
 
     render() {
         return (
@@ -63,9 +71,9 @@ export default class Lancamentos extends React.Component {
                                     paddingBottom: 20,
                                     borderLeftColor: item.cd_tipoconta == 0 ? 'red' : 'blue',
                                     borderLeftWidth: 5,
-                                    flexDirection:'row'
+                                    flexDirection: 'row'
                                 }}>
-                                <Text> {moment(new Date(item.dt_lancamento)).format('DD/MM HH:mm')}</Text>
+                                <Text> {this.formatarLancamento(item)}</Text>
                                 <Text> {item.tx_descricao}</Text>
                                 <Text> {item.vl_parcela}</Text>
                             </View>

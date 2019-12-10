@@ -19,7 +19,7 @@ export default class CadastroCategorias extends React.Component {
     cadastrarCategoria = () => {
 
         let navigation = this.props.navigation;
-        debugger
+        
         db.transaction(tx => {
 
             const { id } = this.state;

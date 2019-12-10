@@ -19,7 +19,7 @@ export default class CadastroDespesas extends React.Component {
             dataVencimento: new Date(),
             valor: 0,
             parcelado: false,
-            valorParcelas: 1,
+            numeroParcelas: 1,
             diasParcela: 30,
             id: null,
             conta: 0
@@ -46,32 +46,67 @@ export default class CadastroDespesas extends React.Component {
     }
 
     cadastrarDespesa = () => {
-        debugger
+
         let navigation = this.props.navigation;
 
+        let parcelas = this.cadastrarValorDespesa();
+       
         db.transaction(tx => {
 
-            const { id } = this.state;
-            const { dataLancamento } = this.state;
-            const { dataVencimento } = this.state;
-            const { conta } = this.state;
-            const { valor } = this.state;
+            parcelas.forEach(function (parcela) {
 
+                let sql = 'insert into tb_lancamentos(id_lancamento,cd_conta,dt_lancamento,dt_vencimento, vl_parcela) values(?,?,?,?,?)';
 
-            let sql = 'insert into tb_lancamentos(id_lancamento,cd_conta,dt_lancamento,dt_vencimento, vl_parcela) values(?,?,?,?,?)';
-            const params = [id, conta, moment(dataLancamento).format('YYYY-MM-DD HH:mm:ss'), moment(dataVencimento).format('YYYY-MM-DD HH:mm:ss'), valor];
+                tx.executeSql(sql, parcela, (tx, results) => {
+                    console.log('Lançamento Cadastrado')
+                }, function (error) {
+                    alert(error);
+                });
+            });
 
-            if (this.state.id) {
-                sql = 'update tb_lancamentos set cd_conta=?, dt_lancamento=?, dt_vencimento=?, vl_parcela=? where id_lancamento=?';
-                params = [dataLancamento, moment(dataVencimento).format('YYYY-MM-DD HH:mm:ss'), conta, valor, id]
+            navigation.navigate('Lancamentos');
+        });
+    }
+
+    cadastrarValorDespesa = () => {
+
+        const { dataVencimento } = this.state;
+
+        const { parcelado } = this.state;
+        const { numeroParcelas } = this.state;
+        const { diasParcela } = this.state;
+
+        let parcelas = [];
+
+        if (parcelado) {
+
+            let dataVencimentoParcela = dataVencimento;
+
+            for (let i = 0; i < numeroParcelas; i++) {
+
+                parcelas.push(this.createParcelas(dataVencimentoParcela));
+
+                dataVencimentoParcela.setDate(dataVencimentoParcela.getDate() + parseInt(diasParcela));
             }
 
-            tx.executeSql(sql, params, (tx, results) => {
-                navigation.navigate('Lancamentos');
-            }, function (error) {
-                alert(error);
-            });
-        });
+            return parcelas;
+
+        }
+
+        parcelas.push(this.createParcelas(dataVencimentoParcela));
+
+        return parcelas;
+    }
+
+    createParcelas = (dataVencimentoParcela) => {
+
+        return [
+            this.state.id,
+            this.state.conta,
+            moment(this.state.dataLancamento).format('YYYY-MM-DD HH:mm:ss'),
+            moment(dataVencimentoParcela).format('YYYY-MM-DD HH:mm:ss'),
+            this.state.valor
+        ]
     }
 
     render() {
@@ -143,10 +178,10 @@ export default class CadastroDespesas extends React.Component {
                             <Label>Parcelas</Label>
                             <Input
                                 numeric
-                                value={this.state.valorParcelas}
+                                value={this.state.numeroParcelas}
                                 disabled={!this.state.parcelado}
                                 keyboardType={'numeric'}
-                                onChange={(e) => this.setState({ valorParcelas: e.nativeEvent.text })}
+                                onChange={(e) => this.setState({ numeroParcelas: e.nativeEvent.text })}
                             />
 
                         </Item>

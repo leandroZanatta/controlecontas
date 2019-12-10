@@ -54,12 +54,14 @@ export default class Contas extends React.Component {
                         renderItem={({ item }) => (
                             <View key={item.id_conta}
                                 style={{
-                                    backgroundColor: 'white',
+                                    backgroundColor: '#FFF',
                                     padding: 20,
                                     borderLeftColor: item.cd_tipoconta == 0 ? 'red' : 'blue',
                                     borderLeftWidth: 5
                                 }}>
-                                <Text> {item.tx_descricao}</Text>
+                                <Text style={{
+                                    fontSize: 14
+                                }}> {item.tx_descricao}</Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
