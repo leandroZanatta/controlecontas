@@ -113,6 +113,12 @@ export default class Lancamentos extends React.Component {
                         >
                             <Icon name="add" />
                         </Button>
+                        <Button
+                            style={{ backgroundColor: 'red' }}
+                            onPress={() => this.props.navigation.navigate('CadastroDespesas')}
+                        >
+                            <Icon name="add" />
+                        </Button>
                     </Fab>
                 </View>
             </Container>

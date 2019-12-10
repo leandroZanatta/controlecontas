@@ -8,6 +8,7 @@ import Categorias from './pages/categorias/categorias';
 import CadastroCategorias from './pages/categorias/cadastrocategorias';
 import Lancamentos from './pages/lancamentos/lancamentos';
 import CadastroReceitas from './pages/lancamentos/cadastroreceitas';
+import CadastroDespesas from './pages/lancamentos/cadastrodespesas';
 
 const CategoriasNavigator = createSwitchNavigator({
     Categorias: Categorias,
@@ -21,7 +22,8 @@ const ContasNavigator = createSwitchNavigator({
 
 const LancamentosNavigator = createSwitchNavigator({
     Lancamentos: Lancamentos,
-    CadastroReceitas: CadastroReceitas
+    CadastroReceitas: CadastroReceitas, 
+    CadastroDespesas: CadastroDespesas
 });
 
 const AppDrawerNavigator = createDrawerNavigator({
