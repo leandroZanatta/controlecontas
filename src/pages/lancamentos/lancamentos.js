@@ -39,6 +39,8 @@ export default class Lancamentos extends React.Component {
 
     formatarLancamento = (item) => {
 
+        alert(JSON.format(item));
+        
         if (item.cd_tipoconta === 0) {
             return moment(new Date(item.dt_vencimento)).format('DD/MM HH:mm');
         }

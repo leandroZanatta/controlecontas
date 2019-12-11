@@ -50,6 +50,8 @@ export default class CadastroDespesas extends React.Component {
         let navigation = this.props.navigation;
 
         let parcelas = this.cadastrarValorDespesa();
+
+        alert(JSON.format(parcelas));
        
         db.transaction(tx => {
 
