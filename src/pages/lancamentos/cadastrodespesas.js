@@ -51,8 +51,6 @@ export default class CadastroDespesas extends React.Component {
 
         let parcelas = this.cadastrarValorDespesa();
 
-        alert(JSON.format(parcelas));
-       
         db.transaction(tx => {
 
             parcelas.forEach(function (parcela) {
@@ -80,9 +78,9 @@ export default class CadastroDespesas extends React.Component {
 
         let parcelas = [];
 
-        if (parcelado) {
+        let dataVencimentoParcela = dataVencimento;
 
-            let dataVencimentoParcela = dataVencimento;
+        if (parcelado) {
 
             for (let i = 0; i < numeroParcelas; i++) {
 
@@ -157,7 +155,7 @@ export default class CadastroDespesas extends React.Component {
                                         marginLeft: 4
                                     },
                                 }}
-                                onDateChange={(date) => { this.setState({ date: date }) }}
+                                onDateChange={(date) => { this.setState({ dataVencimento: date }) }}
 
                             />
                         </Item>
