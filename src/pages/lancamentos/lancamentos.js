@@ -36,7 +36,16 @@ export default class Lancamentos extends React.Component {
             });
         });
     }
+    excluir = (data) => {
 
+        var me = this;
+        db.transaction(tx => {
+
+            tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [data.item.id_lancamento], (tx, results) => {
+                me.componentDidMount();
+            });
+        });
+    }
     formatarLancamento = (item) => {
 
         if (item.cd_tipoconta === 0) {
@@ -87,19 +96,26 @@ export default class Lancamentos extends React.Component {
                                 justifyContent: 'space-between'
                             }}>
                                 <Button light
-                                    onPress={() => alert('teste')}>
+                                    onPress={() => this.excluir(data)}>
                                     <Icon name='trash' />
                                 </Button>
-
-                                <Button light
-                                    onPress={() => alert('teste')}>
-                                    <Icon name='trash' />
-                                </Button>
+                                {data.item.cd_tipoconta === 0 &&
+                                    <View >
+                                        <Button light
+                                            onPress={() => this.props.navigation.navigate('CadastroPagamentos')}>
+                                            <Icon name='add' />
+                                        </Button>
+                                    </View>
+                                }
                             </View>
+
+
                         )}
                         onRowOpen={(rowKey, rowMap) => {
                             setTimeout(() => {
-                                rowMap[rowKey].closeRow()
+                                if (rowMap[rowKey]) {
+                                    rowMap[rowKey].closeRow()
+                                }
                             }, 2000)
                         }}
                         leftOpenValue={75}
