@@ -45,10 +45,12 @@ export default class Lancamentos extends React.Component {
     excluir = (item) => {
 
         var me = this;
+
         db.transaction(tx => {
 
             tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [item.id_lancamento], (tx, results) => {
-                this.buscarLancamentos();
+
+                me.buscarLancamentos();
             });
         });
     }
@@ -118,7 +120,7 @@ export default class Lancamentos extends React.Component {
                                 {data.item.cd_tipoconta === 0 &&
                                     <View >
                                         <Button light
-                                            onPress={() => this.props.navigation.navigate('CadastroPagamentos')}>
+                                            onPress={() => this.props.navigation.navigate('CadastroPagamentos', data.item)}>
                                             <Icon name='thumbs-up' />
                                         </Button>
                                     </View>

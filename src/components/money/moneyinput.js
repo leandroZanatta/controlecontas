@@ -7,14 +7,14 @@ export default class MoneyInput extends React.Component {
         super(props);
 
         this.state = {
-            valor: 0
+            valor: props.value ? props.value : 0
         };
     }
 
 
 
     formatarValor = () => {
-      
+
         let valor = this.state.valor.toString().split('.');
 
         if (valor.length < 2) {
