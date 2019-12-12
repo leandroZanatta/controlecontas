@@ -48,11 +48,18 @@ export default class Lancamentos extends React.Component {
 
         db.transaction(tx => {
 
-            tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [item.id_lancamento], (tx, results) => {
+            tx.executeSql('DELETE FROM tb_pagamentos WHERE cd_contadespeza = ?', [item.id_lancamento], (tx, results) => {
 
-                me.buscarLancamentos();
+                db.transaction(tx => {
+
+                    tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [item.id_lancamento], (tx, results) => {
+
+                        me.buscarLancamentos();
+                    });
+                });
             });
         });
+
     }
 
     formatarLancamento = (item) => {
@@ -134,7 +141,7 @@ export default class Lancamentos extends React.Component {
                                 if (rowMap[rowKey]) {
                                     rowMap[rowKey].closeRow()
                                 }
-                            }, 2000)
+                            }, 5000)
                         }}
                         leftOpenValue={75}
                         rightOpenValue={-75}

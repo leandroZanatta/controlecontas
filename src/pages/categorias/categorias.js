@@ -47,7 +47,7 @@ export default class Categorias extends React.Component {
     buscarCategorias = () => {
 
         db.transaction(tx => {
-            
+
             tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
                 var temp = [];
 
@@ -147,7 +147,7 @@ export default class Categorias extends React.Component {
                                 if (rowMap[rowKey]) {
                                     rowMap[rowKey].closeRow()
                                 }
-                            }, 2000)
+                            }, 5000)
                         }}
                     />
                     <Fab

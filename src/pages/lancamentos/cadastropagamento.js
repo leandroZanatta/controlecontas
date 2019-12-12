@@ -12,7 +12,7 @@ export default class CadastroPagamentos extends React.Component {
 
     constructor(props) {
         super(props);
-        debugger
+       
         this.state = {
             contas: [],
             id: null,

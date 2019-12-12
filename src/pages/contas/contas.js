@@ -90,8 +90,10 @@ export default class Contas extends React.Component {
                         )}
                         onRowOpen={(rowKey, rowMap) => {
                             setTimeout(() => {
-                                rowMap[rowKey].closeRow()
-                            }, 2000)
+                                if (rowMap[rowKey]) {
+                                    rowMap[rowKey].closeRow()
+                                }
+                            }, 5000)
                         }}
                         leftOpenValue={75}
                         rightOpenValue={-75}
