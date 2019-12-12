@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { Body, Header, Left, Title, Icon, Fab, Button, Container } from 'native-base';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import moment from 'moment';
 
 const db = openDatabase({ name: 'controlecontas.db' });
 
@@ -18,7 +19,35 @@ export default class Categorias extends React.Component {
 
     componentDidMount() {
 
+        this.buscarCategorias();
+    }
+
+    montarOpcoesEsquerda = (data, rowMap) => {
+
+        if (!data.item.dt_exclusao) {
+            return (
+                <View >
+                    <Button light
+                        onPress={() => this.excluir(data, rowMap)}>
+                        <Icon name='trash' />
+                    </Button>
+                </View>
+            )
+        }
+
+        return (<View >
+            <Button light
+                onPress={() => this.reincluir(data, rowMap)}>
+                <Icon name='done-all' />
+            </Button>
+        </View>
+        );
+    }
+
+    buscarCategorias = () => {
+
         db.transaction(tx => {
+            
             tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
                 var temp = [];
 
@@ -29,6 +58,40 @@ export default class Categorias extends React.Component {
                 this.setState({
                     items: temp,
                 });
+            });
+        });
+    }
+
+    excluir = (data, rowMap) => {
+
+        var me = this;
+
+        db.transaction(tx => {
+
+            tx.executeSql('update tb_categorias set dt_exclusao=? where id_categoria= ?', [moment().format('YYYY-MM-DD HH:mm:ss'), data.item.id_categoria], (tx, results) => {
+
+                me.buscarCategorias();
+
+                if (rowMap[data.index]) {
+                    rowMap[data.index].closeRow()
+                }
+            });
+        });
+    }
+
+    reincluir = (data, rowMap) => {
+
+        var me = this;
+
+        db.transaction(tx => {
+
+            tx.executeSql('update tb_categorias set dt_exclusao=? where id_categoria= ?', [null, data.item.id_categoria], (tx, results) => {
+
+                me.buscarCategorias();
+
+                if (rowMap[data.index]) {
+                    rowMap[data.index].closeRow()
+                }
             });
         });
     }
@@ -68,19 +131,24 @@ export default class Categorias extends React.Component {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}>
+                                {
+                                    this.montarOpcoesEsquerda(data, rowMap)
+                                }
                                 <Button light
                                     onPress={() => alert('teste')}>
-                                    <Icon name='trash' />
-                                </Button>
-
-                                <Button light
-                                    onPress={() => alert('teste')}>
-                                    <Icon name='trash' />
+                                    <Icon name='edit' />
                                 </Button>
                             </View>
                         )}
                         leftOpenValue={75}
                         rightOpenValue={-75}
+                        onRowOpen={(rowKey, rowMap) => {
+                            setTimeout(() => {
+                                if (rowMap[rowKey]) {
+                                    rowMap[rowKey].closeRow()
+                                }
+                            }, 2000)
+                        }}
                     />
                     <Fab
                         active={this.state.active}
@@ -90,7 +158,6 @@ export default class Categorias extends React.Component {
                         position="bottomRight"
                         onPress={() => this.props.navigation.navigate('CadastroCategorias')}>
                         <Icon name="add" />
-
                     </Fab>
                 </View>
             </Container>

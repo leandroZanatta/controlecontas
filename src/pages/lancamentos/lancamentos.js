@@ -21,6 +21,11 @@ export default class Lancamentos extends React.Component {
 
     componentDidMount() {
 
+        this.buscarLancamentos();
+    }
+
+    buscarLancamentos = () => {
+
         db.transaction(tx => {
 
             tx.executeSql('SELECT * FROM tb_lancamentos lancamentos left join tb_contas contas on lancamentos.cd_conta=contas.id_conta', [], (tx, results) => {
@@ -36,16 +41,18 @@ export default class Lancamentos extends React.Component {
             });
         });
     }
-    excluir = (data) => {
+
+    excluir = (item) => {
 
         var me = this;
         db.transaction(tx => {
 
-            tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [data.item.id_lancamento], (tx, results) => {
-                me.componentDidMount();
+            tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [item.id_lancamento], (tx, results) => {
+                this.buscarLancamentos();
             });
         });
     }
+
     formatarLancamento = (item) => {
 
         if (item.cd_tipoconta === 0) {
@@ -54,6 +61,11 @@ export default class Lancamentos extends React.Component {
         return moment(item.dt_lancamento, 'YYYY-MM-DD HH:mm:ss').format('DD/MM');
     }
 
+    ListViewItemSeparator = () => {
+        return (
+            <View style={{ height: 0.5, width: '100%', backgroundColor: '#CCC' }} />
+        );
+    };
 
     render() {
         return (
@@ -83,8 +95,12 @@ export default class Lancamentos extends React.Component {
                                     flexDirection: 'row'
                                 }}>
                                 <Text> {this.formatarLancamento(item)}</Text>
-                                <Text> {item.tx_descricao}</Text>
-                                <Text> {item.vl_parcela}</Text>
+                                <Text style={{
+                                    flex: 1
+                                }}> {item.tx_descricao}</Text>
+                                <Text style={{
+                                    marginRight: 10
+                                }}> {item.vl_parcela}</Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
@@ -96,14 +112,14 @@ export default class Lancamentos extends React.Component {
                                 justifyContent: 'space-between'
                             }}>
                                 <Button light
-                                    onPress={() => this.excluir(data)}>
+                                    onPress={() => this.excluir(data.item)}>
                                     <Icon name='trash' />
                                 </Button>
                                 {data.item.cd_tipoconta === 0 &&
                                     <View >
                                         <Button light
                                             onPress={() => this.props.navigation.navigate('CadastroPagamentos')}>
-                                            <Icon name='add' />
+                                            <Icon name='thumbs-up' />
                                         </Button>
                                     </View>
                                 }

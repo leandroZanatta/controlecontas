@@ -33,6 +33,11 @@ export default class Contas extends React.Component {
 
     }
 
+    ListViewItemSeparator = () => {
+        return (
+            <View style={{ height: 0.5, width: '100%', backgroundColor: '#CCC' }} />
+        );
+    };
 
     render() {
         return (
@@ -79,7 +84,7 @@ export default class Contas extends React.Component {
 
                                 <Button light
                                     onPress={() => alert('teste')}>
-                                    <Icon name='trash' />
+                                    <Icon name='edit' />
                                 </Button>
                             </View>
                         )}
