@@ -12,15 +12,34 @@ export default class CadastroPagamentos extends React.Component {
 
     constructor(props) {
         super(props);
-
+       
         this.state = {
             contas: [],
+            id: null,
+            contareceita: null,
+            contadespeza: props.navigation.getParam('cd_conta'),
+            valor: props.navigation.getParam('vl_parcela'),
             dataPagamento: new Date()
         }
     }
 
     componentDidMount() {
 
+        db.transaction(tx => {
+
+            tx.executeSql('SELECT * FROM tb_contas where cd_tipoconta=1', [], (tx, results) => {
+                var temp = [];
+
+
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+
+                this.setState({
+                    contas: temp,
+                });
+            });
+        });
 
     }
 
@@ -28,22 +47,22 @@ export default class CadastroPagamentos extends React.Component {
 
         let navigation = this.props.navigation;
 
-        let parcelas = this.cadastrarValorDespesa();
+        const { id } = this.state;
+        const { contadespeza } = this.state;
+        const { contareceita } = this.state;
+        const { dataPagamento } = this.state;
+        const { valor } = this.state;
 
         db.transaction(tx => {
 
-            parcelas.forEach(function (parcela) {
+            let sql = 'insert into tb_pagamentos(id_pagamento, cd_contadespeza, cd_contareceita, dt_pagamento, vl_parcela) values(?,?,?,?,?)';
+            const params = [id, contadespeza, contareceita, moment(dataPagamento, 'YYYY-MM-DD').format('YYYY-MM-DD HH:mm:ss'), valor];
 
-                let sql = 'insert into tb_lancamentos(id_lancamento,cd_conta,dt_lancamento,dt_vencimento, vl_parcela) values(?,?,?,?,?)';
-
-                tx.executeSql(sql, parcela, (tx, results) => {
-                    console.log('Lançamento Cadastrado')
-                }, function (error) {
-                    alert(error);
-                });
+            tx.executeSql(sql, params, (tx, results) => {
+                navigation.navigate('Lancamentos');
+            }, function (error) {
+                alert(error);
             });
-
-            navigation.navigate('Lancamentos');
         });
     }
 
@@ -69,8 +88,8 @@ export default class CadastroPagamentos extends React.Component {
                                 mode="dropdown"
                                 iosIcon={<Icon name="arrow-down" />}
                                 style={{ width: undefined }}
-                                selectedValue={this.state.conta}
-                                onValueChange={(e) => this.setState({ conta: e })}
+                                selectedValue={this.state.contareceita}
+                                onValueChange={(e) => this.setState({ contareceita: e })}
                             >
                                 {
                                     this.state.contas.map(conta => {
@@ -102,6 +121,7 @@ export default class CadastroPagamentos extends React.Component {
                         <Item stackedLabel>
                             <Label>Valor</Label>
                             <MoneyInput
+                                value={this.state.valor}
                                 onMoneyChange={(valor) => this.setState({ valor })}
                             />
                         </Item>

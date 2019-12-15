@@ -9,13 +9,16 @@ export default class App extends React.Component {
 
         var tables = [{
             name: 'tb_categorias',
-            sql: ['CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255))']
+            sql: ['CREATE TABLE IF NOT EXISTS tb_categorias(id_categoria INTEGER PRIMARY KEY AUTOINCREMENT, tx_descricao VARCHAR(255), dt_exclusao TEXT)']
         }, {
             name: 'tb_contas',
-            sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT,cd_categoria integer not null,cd_tipoconta integer not null,tx_descricao VARCHAR(255),FOREIGN KEY(cd_categoria) REFERENCES tb_categorias(id_categoria))']
+            sql: ['CREATE TABLE IF NOT EXISTS tb_contas(id_conta INTEGER PRIMARY KEY AUTOINCREMENT, cd_categoria integer not null, cd_tipoconta integer not null, tx_descricao VARCHAR(255), dt_exclusao TEXT, FOREIGN KEY(cd_categoria) REFERENCES tb_categorias(id_categoria))']
         }, {
             name: 'tb_lancamentos',
-            sql: ['CREATE TABLE IF NOT EXISTS tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT,cd_conta INTEGER NOT NULL,dt_lancamento TEXT NOT NULL,dt_vencimento TEXT,vl_parcela REAL NOT NULL,FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
+            sql: ['CREATE TABLE IF NOT EXISTS tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT, cd_conta INTEGER NOT NULL, dt_lancamento TEXT NOT NULL, dt_vencimento TEXT, vl_parcela REAL NOT NULL, FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
+        }, {
+            name: 'tb_pagamentos',
+            sql: ['CREATE TABLE IF NOT EXISTS tb_pagamentos (id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT, cd_contadespeza INTEGER NOT NULL, cd_contareceita INTEGER NOT NULL, dt_pagamento TEXT NOT NULL, vl_parcela REAL NOT NULL, FOREIGN KEY(cd_contadespeza) REFERENCES tb_contas(id_conta), FOREIGN KEY(cd_contareceita) REFERENCES tb_contas(id_conta))']
         }];
 
         db.transaction(function (txn) {
@@ -36,11 +39,8 @@ export default class App extends React.Component {
                             table.sql.forEach(query => {
 
                                 txn.executeSql(query, []);
-
                             })
-
                         }
-
                     });
                 }
             );
