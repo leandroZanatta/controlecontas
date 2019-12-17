@@ -8,8 +8,8 @@ export default class CadastroCategorias extends React.Component {
         super(props);
 
         this.state = {
-            id: props.navigation.getParam('id_categoria'),
-            descricao: props.navigation.getParam('tx_descricao')
+            id: props.navigation.getParam('id'),
+            descricao: props.navigation.getParam('descricao')
         };
     }
 

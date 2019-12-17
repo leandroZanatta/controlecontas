@@ -34,7 +34,7 @@ editarCategoria = (categoria, callbackSucess, callbackError) => {
     execute(sql, params, callbackSucess, callbackError);
 }
 
-salvarNovaCategoria = () => {
+salvarNovaCategoria = (categoria, callbackSucess, callbackError) => {
 
     let sql = 'insert into tb_categorias(id_categoria,tx_descricao) values(?,?)';
     const params = [categoria.id, categoria.descricao];

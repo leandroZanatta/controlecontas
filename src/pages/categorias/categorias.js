@@ -106,8 +106,6 @@ export default class Categorias extends React.Component {
                                     onPress={() => this.editarCategoria(item)}>
                                     <Text> {item.descricao}</Text>
                                 </Button>
-
-
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (

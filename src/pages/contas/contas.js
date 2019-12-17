@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { Body, Header, Left, Title, Icon, Container, Fab, Button, Text } from 'native-base';
+import { Icon, Container, Fab, Button, Text } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { openDatabase } from 'react-native-sqlite-storage';
-
-const db = openDatabase({ name: 'controlecontas.db' });
-
+import HeaderMenu from '../../components/menu/headermenu';
+import { buscarContas, excluirConta, reincluirConta } from '../../services/contas/contas';
 
 export default class Contas extends React.Component {
 
@@ -16,21 +14,50 @@ export default class Contas extends React.Component {
             active: false,
             items: [],
         };
+    }
 
-        db.transaction(tx => {
-            tx.executeSql('SELECT * FROM tb_contas order by cd_tipoconta desc,tx_descricao asc', [], (tx, results) => {
-                var temp = [];
+    componentDidMount() {
 
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+        buscarContas(this.adicionarContas);
+    }
 
-                this.setState({
-                    items: temp,
-                });
-            });
+    adicionarContas = (contas) => {
+
+        this.setState({
+            items: contas,
         });
+    }
 
+    editarConta = (item) => {
+
+        this.props.navigation.navigate('CadastroContas', item)
+    }
+
+    onEditConta(data, rowMap) {
+
+        buscarContas(this.adicionarContas)
+
+        if (rowMap[data.index]) {
+            rowMap[data.index].closeRow()
+        }
+    }
+
+    excluir = (data, rowMap) => {
+
+        let me = this;
+
+        const onEdit = function (result) { me.onEditConta(data, rowMap) };
+
+        excluirConta(data.item, onEdit);
+    }
+
+    reincluir = (data, rowMap) => {
+
+        let me = this;
+
+        const onEdit = function (result) { me.onEditConta(data, rowMap) };
+
+        reincluirConta(data.item, onEdit);
     }
 
     ListViewItemSeparator = () => {
@@ -39,17 +66,32 @@ export default class Contas extends React.Component {
         );
     };
 
+    montarOpcoesEsquerda = (data, rowMap) => {
+
+        if (!data.item.exclusao) {
+            return (
+                <View >
+                    <Button light
+                        onPress={() => this.excluir(data, rowMap)}>
+                        <Icon name='trash' />
+                    </Button>
+                </View>
+            )
+        }
+
+        return (<View >
+            <Button light
+                onPress={() => this.reincluir(data, rowMap)}>
+                <Icon name='done-all' />
+            </Button>
+        </View>
+        );
+    }
+
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.openDrawer()} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Contas</Title>
-                    </Body>
-                </Header>
+                <HeaderMenu title="Contas" navigation={this.props.navigation} />
                 <View style={{ flex: 1 }}>
                     <SwipeListView
                         useFlatList={true}
@@ -57,16 +99,20 @@ export default class Contas extends React.Component {
                         ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <View key={item.id_conta}
+                            <View
+                                key={item.id}
                                 style={{
                                     backgroundColor: '#FFF',
-                                    padding: 20,
-                                    borderLeftColor: item.cd_tipoconta == 0 ? 'red' : 'blue',
+                                    borderLeftColor: item.tipoConta == 0 ? 'red' : 'blue',
                                     borderLeftWidth: 5
                                 }}>
-                                <Text style={{
-                                    fontSize: 14
-                                }}> {item.tx_descricao}</Text>
+                                <Button
+                                    style={{ backgroundColor: '#FFF' }}
+                                    onPress={() => this.editarConta(item)}>
+                                    <Text
+                                        style={{ color: '#000' }}
+                                    > {item.descricao}</Text>
+                                </Button>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
@@ -77,15 +123,9 @@ export default class Contas extends React.Component {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}>
-                                <Button light
-                                    onPress={() => alert('teste')}>
-                                    <Icon name='trash' />
-                                </Button>
-
-                                <Button light
-                                    onPress={() => alert('teste')}>
-                                    <Icon name='edit' />
-                                </Button>
+                                {
+                                    this.montarOpcoesEsquerda(data, rowMap)
+                                }
                             </View>
                         )}
                         onRowOpen={(rowKey, rowMap) => {
@@ -107,7 +147,6 @@ export default class Contas extends React.Component {
                         position="bottomRight"
                         onPress={() => this.props.navigation.navigate('CadastroContas')}>
                         <Icon name="add" />
-
                     </Fab>
                 </View>
             </Container>
