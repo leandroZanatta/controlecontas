@@ -4,6 +4,7 @@ import { Body, Header, Left, Title, Icon, Container, Fab, Button, Text } from 'n
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { openDatabase } from 'react-native-sqlite-storage';
 import moment from 'moment';
+import HeaderMenu from '../../components/menu/headermenu';
 
 const db = openDatabase({ name: 'controlecontas.db' });
 
@@ -79,14 +80,7 @@ export default class Lancamentos extends React.Component {
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.openDrawer()} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Lançamentos</Title>
-                    </Body>
-                </Header>
+                <HeaderMenu title="Lançamentos" navigation={this.props.navigation} />
                 <View style={{ flex: 1 }}>
                     <SwipeListView
                         useFlatList={true}

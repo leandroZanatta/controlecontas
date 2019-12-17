@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Body, Header, Left, Title, Icon, Container, Form, Item, Label, Input, Content, Button, Text, Footer } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
-
-const db = openDatabase({ name: 'controlecontas.db' });
+import { salvarCategoria } from '../../services/categorias/categorias';
 
 export default class CadastroCategorias extends React.Component {
 
@@ -10,37 +8,13 @@ export default class CadastroCategorias extends React.Component {
         super(props);
 
         this.state = {
-            id: null,
-            descricao: ''
+            id: props.navigation.getParam('id_categoria'),
+            descricao: props.navigation.getParam('tx_descricao')
         };
-
     }
 
-    cadastrarCategoria = () => {
-
-        let navigation = this.props.navigation;
-        
-        db.transaction(tx => {
-
-            const { id } = this.state;
-            const { descricao } = this.state;
-
-            let sql = 'insert into tb_categorias(id_categoria,tx_descricao) values(?,?)';
-            const params = [id, descricao];
-
-            if (this.state.id) {
-                sql = 'update tb_categorias set tx_descricao=? where id_categoria=?';
-                params = [descricao, id]
-            }
-
-            tx.executeSql(sql, params, (tx, results) => {
-                navigation.navigate('Categorias');
-            }, function (error) {
-                alert(error);
-            });
-        });
-
-
+    goBack = () => {
+        this.props.navigation.navigate('Categorias');
     }
 
     render() {
@@ -48,7 +22,7 @@ export default class CadastroCategorias extends React.Component {
             <Container>
                 <Header>
                     <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Categorias')} />
+                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={this.goBack} />
                     </Left>
                     <Body style={{ flex: 1 }}>
                         <Title>Cadastrar Categoria</Title>
@@ -64,10 +38,9 @@ export default class CadastroCategorias extends React.Component {
                             />
                         </Item>
                     </Form>
-
                 </Content>
                 <Footer>
-                    <Button onPress={() => this.cadastrarCategoria()}>
+                    <Button onPress={() => salvarCategoria(this.state, this.goBack)}>
                         <Text>Salvar</Text>
                     </Button>
                 </Footer>

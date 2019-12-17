@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { Body, Header, Left, Title, Icon, Fab, Button, Container } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
+import { Icon, Fab, Button, Container } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import moment from 'moment';
-
-const db = openDatabase({ name: 'controlecontas.db' });
+import { buscarCategorias, excluirCategoria, reincluirCategoria } from '../../services/categorias/categorias';
+import HeaderMenu from '../../components/menu/headermenu';
 
 export default class Categorias extends React.Component {
 
@@ -17,14 +15,22 @@ export default class Categorias extends React.Component {
         };
     }
 
+    adicionarCategorias = (categorias) => {
+
+        this.setState({
+            items: categorias,
+        });
+
+    }
+
     componentDidMount() {
 
-        this.buscarCategorias();
+        buscarCategorias(this.adicionarCategorias);
     }
 
     montarOpcoesEsquerda = (data, rowMap) => {
 
-        if (!data.item.dt_exclusao) {
+        if (!data.item.exclusao) {
             return (
                 <View >
                     <Button light
@@ -44,56 +50,37 @@ export default class Categorias extends React.Component {
         );
     }
 
-    buscarCategorias = () => {
+    onEditCategoria(data, rowMap) {
 
-        db.transaction(tx => {
+        buscarCategorias(this.adicionarCategorias)
 
-            tx.executeSql('SELECT * FROM tb_categorias', [], (tx, results) => {
-                var temp = [];
-
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-
-                this.setState({
-                    items: temp,
-                });
-            });
-        });
+        if (rowMap[data.index]) {
+            rowMap[data.index].closeRow()
+        }
     }
+
 
     excluir = (data, rowMap) => {
 
-        var me = this;
+        let me = this;
 
-        db.transaction(tx => {
+        const onEdit = function (result) { me.onEditCategoria(data, rowMap) };
 
-            tx.executeSql('update tb_categorias set dt_exclusao=? where id_categoria= ?', [moment().format('YYYY-MM-DD HH:mm:ss'), data.item.id_categoria], (tx, results) => {
-
-                me.buscarCategorias();
-
-                if (rowMap[data.index]) {
-                    rowMap[data.index].closeRow()
-                }
-            });
-        });
+        excluirCategoria(data.item, onEdit);
     }
 
     reincluir = (data, rowMap) => {
 
-        var me = this;
+        let me = this;
 
-        db.transaction(tx => {
+        const onEdit = function (result) { me.onEditCategoria(data, rowMap) };
 
-            tx.executeSql('update tb_categorias set dt_exclusao=? where id_categoria= ?', [null, data.item.id_categoria], (tx, results) => {
+        reincluirCategoria(data.item, onEdit);
+    }
 
-                me.buscarCategorias();
+    editarCategoria = (item) => {
 
-                if (rowMap[data.index]) {
-                    rowMap[data.index].closeRow()
-                }
-            });
-        });
+        this.props.navigation.navigate('CadastroCategorias', item)
     }
 
     ListViewItemSeparator = () => {
@@ -105,22 +92,22 @@ export default class Categorias extends React.Component {
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="menu" onPress={() => this.props.navigation.openDrawer()} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Categorias</Title>
-                    </Body>
-                </Header>
+                <HeaderMenu title="Categorias" navigation={this.props.navigation} />
                 <View style={{ flex: 1 }}>
                     <SwipeListView
                         data={this.state.items}
                         ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <View key={item.id_grupo} style={{ backgroundColor: 'white', padding: 20 }}>
-                                <Text> {item.tx_descricao}</Text>
+                            <View>
+                                <Button
+                                    key={item.id}
+                                    style={{ backgroundColor: '#FFF', padding: 20 }}
+                                    onPress={() => this.editarCategoria(item)}>
+                                    <Text> {item.descricao}</Text>
+                                </Button>
+
+
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
@@ -134,10 +121,6 @@ export default class Categorias extends React.Component {
                                 {
                                     this.montarOpcoesEsquerda(data, rowMap)
                                 }
-                                <Button light
-                                    onPress={() => alert('teste')}>
-                                    <Icon name='edit' />
-                                </Button>
                             </View>
                         )}
                         leftOpenValue={75}

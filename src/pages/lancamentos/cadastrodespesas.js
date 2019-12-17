@@ -19,8 +19,8 @@ export default class CadastroDespesas extends React.Component {
             dataVencimento: new Date(),
             valor: 0,
             parcelado: false,
-            numeroParcelas: 1,
-            diasParcela: 30,
+            numeroParcelas: '1',
+            diasParcela: '30',
             id: null,
             conta: 0
         }
@@ -78,7 +78,7 @@ export default class CadastroDespesas extends React.Component {
 
         let parcelas = [];
 
-   
+
         if (parcelado) {
 
             let dataVencimentoParcela = dataVencimento;
@@ -105,7 +105,7 @@ export default class CadastroDespesas extends React.Component {
             this.state.id,
             this.state.conta,
             moment(this.state.dataLancamento).format('YYYY-MM-DD HH:mm:ss'),
-            moment(dataVencimentoParcela,'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss'),
+            moment(dataVencimentoParcela, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss'),
             this.state.valor
         ]
     }
