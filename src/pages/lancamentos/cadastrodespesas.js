@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
 import MoneyInput from '../../components/money/moneyinput';
 import moment from 'moment';
 import DatePicker from 'react-native-datepicker';
 import { buscarDespezas } from '../../services/contas/contas';
 import { cadastrarDespezas } from '../../services/lancamentos/lancamentos';
-const db = openDatabase({ name: 'controlecontas.db' });
+
 
 
 export default class CadastroDespesas extends React.Component {
