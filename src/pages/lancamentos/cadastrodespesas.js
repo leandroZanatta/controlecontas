@@ -3,8 +3,9 @@ import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Te
 import { openDatabase } from 'react-native-sqlite-storage';
 import MoneyInput from '../../components/money/moneyinput';
 import moment from 'moment';
-import DatePicker from 'react-native-datepicker'
-
+import DatePicker from 'react-native-datepicker';
+import { buscarDespezas } from '../../services/contas/contas';
+import { cadastrarDespezas } from '../../services/lancamentos/lancamentos';
 const db = openDatabase({ name: 'controlecontas.db' });
 
 
@@ -28,56 +29,29 @@ export default class CadastroDespesas extends React.Component {
 
     componentDidMount() {
 
-        db.transaction(tx => {
+        buscarDespezas(this.adicionarContasDespeza);
+    }
 
-            tx.executeSql('SELECT * FROM tb_contas where cd_tipoconta=0', [], (tx, results) => {
-                var temp = [];
+    adicionarContasDespeza = (contas) => {
 
-
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-
-                this.setState({
-                    contas: temp,
-                });
-            });
-        });
+        this.setState({ contas: contas });
     }
 
     cadastrarDespesa = () => {
 
-        let navigation = this.props.navigation;
-
         let parcelas = this.cadastrarValorDespesa();
 
-        db.transaction(tx => {
-
-            parcelas.forEach(function (parcela) {
-
-                let sql = 'insert into tb_lancamentos(id_lancamento,cd_conta,dt_lancamento,dt_vencimento, vl_parcela) values(?,?,?,?,?)';
-
-                tx.executeSql(sql, parcela, (tx, results) => {
-                    console.log('Lançamento Cadastrado')
-                }, function (error) {
-                    alert(error);
-                });
-            });
-
-            navigation.navigate('Lancamentos');
-        });
+        cadastrarDespezas(parcelas, () => this.props.navigation.navigate('Lancamentos'));
     }
 
     cadastrarValorDespesa = () => {
 
         const { dataVencimento } = this.state;
-
         const { parcelado } = this.state;
         const { numeroParcelas } = this.state;
         const { diasParcela } = this.state;
 
         let parcelas = [];
-
 
         if (parcelado) {
 
@@ -91,7 +65,6 @@ export default class CadastroDespesas extends React.Component {
             }
 
             return parcelas;
-
         }
 
         parcelas.push(this.createParcelas(dataVencimento));

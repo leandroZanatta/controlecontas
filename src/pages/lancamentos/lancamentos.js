@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { Body, Header, Left, Title, Icon, Container, Fab, Button, Text } from 'native-base';
+import { Icon, Container, Fab, Button, Text } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { openDatabase } from 'react-native-sqlite-storage';
 import moment from 'moment';
 import HeaderMenu from '../../components/menu/headermenu';
-
-const db = openDatabase({ name: 'controlecontas.db' });
-
+import { buscarLancamentos, excluirLancamento } from '../../services/lancamentos/lancamentos';
 
 export default class Lancamentos extends React.Component {
 
@@ -22,45 +19,17 @@ export default class Lancamentos extends React.Component {
 
     componentDidMount() {
 
-        this.buscarLancamentos();
+        buscarLancamentos(this.adicionarLancamentos);
     }
 
-    buscarLancamentos = () => {
+    adicionarLancamentos = (lancamentos) => {
 
-        db.transaction(tx => {
-
-            tx.executeSql('SELECT * FROM tb_lancamentos lancamentos left join tb_contas contas on lancamentos.cd_conta=contas.id_conta', [], (tx, results) => {
-                var temp = [];
-
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-
-                this.setState({
-                    items: temp,
-                });
-            });
-        });
+        this.setState({ items: lancamentos });
     }
 
     excluir = (item) => {
 
-        var me = this;
-
-        db.transaction(tx => {
-
-            tx.executeSql('DELETE FROM tb_pagamentos WHERE cd_contadespeza = ?', [item.id_lancamento], (tx, results) => {
-
-                db.transaction(tx => {
-
-                    tx.executeSql('DELETE FROM tb_lancamentos WHERE id_lancamento = ?', [item.id_lancamento], (tx, results) => {
-
-                        me.buscarLancamentos();
-                    });
-                });
-            });
-        });
-
+        excluirLancamento(item, () => { buscarLancamentos(this.adicionarLancamentos) })
     }
 
     formatarLancamento = (item) => {
@@ -127,8 +96,6 @@ export default class Lancamentos extends React.Component {
                                     </View>
                                 }
                             </View>
-
-
                         )}
                         onRowOpen={(rowKey, rowMap) => {
                             setTimeout(() => {

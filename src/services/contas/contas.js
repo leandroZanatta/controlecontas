@@ -1,4 +1,4 @@
-import { salvarContaDB, buscarContaDB, alterarExclusaoContaDB } from '../../repository/contas/contas';
+import { salvarContaDB, buscarContaDB, alterarExclusaoContaDB, buscarReceitasDB, buscarDespezasDB, cadastrarDespezasDB } from '../../repository/contas/contas';
 import moment from 'moment';
 
 export function salvarConta(conta, callbackSucess, callbackError) {
@@ -23,4 +23,12 @@ export function buscarContas(callbackSucess, callbackError) {
     buscarContaDB(callbackSucess, callbackError);
 }
 
+export function buscarReceitas(callbackSucess, callbackError) {
 
+    buscarReceitasDB(callbackSucess, callbackError);
+}
+
+export function buscarDespezas(callbackSucess, callbackError) {
+
+    buscarDespezasDB(callbackSucess, callbackError);
+}

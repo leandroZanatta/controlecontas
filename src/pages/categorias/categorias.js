@@ -41,12 +41,13 @@ export default class Categorias extends React.Component {
             )
         }
 
-        return (<View >
-            <Button light
-                onPress={() => this.reincluir(data, rowMap)}>
-                <Icon name='done-all' />
-            </Button>
-        </View>
+        return (
+            <View >
+                <Button light
+                    onPress={() => this.reincluir(data, rowMap)}>
+                    <Icon name='done-all' />
+                </Button>
+            </View>
         );
     }
 

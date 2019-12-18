@@ -17,6 +17,23 @@ export function buscarContaDB(callbackSucess, callbackError) {
     executeSelect(sql, params, callbackSucess, callbackError);
 }
 
+export function buscarReceitasDB(callbackSucess, callbackError) {
+
+    sql = 'SELECT id_conta as id, cd_categoria as categoria, cd_tipoconta as tipoConta, tx_descricao as descricao, dt_exclusao as exclusao FROM tb_contas order by cd_tipoconta desc, tx_descricao asc';
+    params = []
+
+    executeSelect(sql, params, callbackSucess, callbackError);
+}
+
+export function buscarDespezasDB(callbackSucess, callbackError) {
+
+    sql = 'SELECT * FROM tb_contas where cd_tipoconta=?';
+    params = [0]
+
+    executeSelect(sql, params, callbackSucess, callbackError);
+}
+
+
 export function alterarExclusaoContaDB(dataExclusao, idConta, callbackSucess, callbackError) {
 
     sql = 'update tb_contas set dt_exclusao=? where id_conta= ?';
@@ -34,7 +51,7 @@ editarConta = (conta, callbackSucess, callbackError) => {
 }
 
 salvarNovaConta = (conta, callbackSucess, callbackError) => {
-    debugger
+
     let sql = 'insert into tb_contas(id_conta, cd_categoria, cd_tipoconta, tx_descricao) values(?,?,?,?)';
     const params = [conta.id, conta.categoria, conta.tipoConta, conta.descricao];
 
