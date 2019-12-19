@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
+import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
 import MoneyInput from '../../components/money/moneyinput';
 import moment from 'moment';
 import DatePicker from 'react-native-datepicker';
 import { buscarDespezas } from '../../services/contas/contas';
 import { cadastrarDespezas } from '../../services/lancamentos/lancamentos';
+import ReturnMenu from '../../components/menu/returnmenu';
 
 
 
@@ -28,19 +29,13 @@ export default class CadastroDespesas extends React.Component {
 
     componentDidMount() {
 
-        buscarDespezas(this.adicionarContasDespeza);
+        buscarDespezas((contas) => this.setState({ contas: contas }));
     }
 
-    adicionarContasDespeza = (contas) => {
-
-        this.setState({ contas: contas });
-    }
 
     cadastrarDespesa = () => {
 
-        let parcelas = this.cadastrarValorDespesa();
-
-        cadastrarDespezas(parcelas, () => this.props.navigation.navigate('Lancamentos'));
+        cadastrarDespezas(this.cadastrarValorDespesa(), () => this.props.navigation.navigate('Lancamentos'));
     }
 
     cadastrarValorDespesa = () => {
@@ -85,14 +80,7 @@ export default class CadastroDespesas extends React.Component {
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Lancamentos')} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Lançar Despesa</Title>
-                    </Body>
-                </Header>
+                <ReturnMenu title='Lançar Despesa' backTo='Lancamentos' navigation={this.props.navigation} />
                 <Content>
                     <Form>
 
@@ -109,9 +97,7 @@ export default class CadastroDespesas extends React.Component {
                                     this.state.contas.map(conta => {
                                         return (<Picker.Item label={conta.tx_descricao} value={conta.id_conta} key={conta.id_conta} />)
                                     })
-
                                 }
-
                             </Picker>
                         </Item>
                         <Item>
@@ -129,7 +115,6 @@ export default class CadastroDespesas extends React.Component {
                                     },
                                 }}
                                 onDateChange={(date) => { this.setState({ dataVencimento: date }) }}
-
                             />
                         </Item>
                         <Item stackedLabel>
@@ -146,7 +131,6 @@ export default class CadastroDespesas extends React.Component {
                                 onPress={() => this.setState({ parcelado: !this.state.parcelado })}
                             />
                         </Item>
-
                         <Item stackedLabel>
                             <Label>Parcelas</Label>
                             <Input
@@ -156,9 +140,7 @@ export default class CadastroDespesas extends React.Component {
                                 keyboardType={'numeric'}
                                 onChange={(e) => this.setState({ numeroParcelas: e.nativeEvent.text })}
                             />
-
                         </Item>
-
                         <Item stackedLabel>
                             <Label>Dias</Label>
                             <Input
@@ -168,7 +150,6 @@ export default class CadastroDespesas extends React.Component {
                                 keyboardType={'numeric'}
                                 onChange={(e) => this.setState({ diasParcela: e.nativeEvent.text })}
                             />
-
                         </Item>
                     </Form>
                 </Content>

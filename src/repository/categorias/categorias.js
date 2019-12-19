@@ -11,7 +11,7 @@ export function salvarCategoriaDB(categoria, callbackSucess, callbackError) {
 }
 
 export function buscarCategoriaDB(callbackSucess, callbackError) {
-
+    
     sql = 'SELECT id_categoria as id, tx_descricao as descricao, dt_exclusao as exclusao FROM tb_categorias';
     params = []
 
@@ -19,7 +19,7 @@ export function buscarCategoriaDB(callbackSucess, callbackError) {
 }
 
 export function alterarExclusaoCategoriaDB(dataExclusao, idCategoria, callbackSucess, callbackError) {
-
+    
     sql = 'update tb_categorias set dt_exclusao=? where id_categoria= ?';
     params = [dataExclusao, idCategoria]
 
@@ -27,7 +27,7 @@ export function alterarExclusaoCategoriaDB(dataExclusao, idCategoria, callbackSu
 }
 
 editarCategoria = (categoria, callbackSucess, callbackError) => {
-
+    
     sql = 'update tb_categorias set tx_descricao=? where id_categoria=?';
     params = [categoria.descricao, categoria.id]
 
@@ -35,7 +35,7 @@ editarCategoria = (categoria, callbackSucess, callbackError) => {
 }
 
 salvarNovaCategoria = (categoria, callbackSucess, callbackError) => {
-
+    
     let sql = 'insert into tb_categorias(id_categoria,tx_descricao) values(?,?)';
     const params = [categoria.id, categoria.descricao];
 

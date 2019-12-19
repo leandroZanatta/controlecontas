@@ -18,7 +18,7 @@ export default class App extends React.Component {
             sql: ['CREATE TABLE IF NOT EXISTS tb_lancamentos (id_lancamento INTEGER PRIMARY KEY AUTOINCREMENT, cd_conta INTEGER NOT NULL, dt_lancamento TEXT NOT NULL, dt_vencimento TEXT, vl_parcela REAL NOT NULL, FOREIGN KEY(cd_conta) REFERENCES tb_contas(id_conta))']
         }, {
             name: 'tb_pagamentos',
-            sql: ['CREATE TABLE IF NOT EXISTS tb_pagamentos (id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT, cd_contadespeza INTEGER NOT NULL, cd_contareceita INTEGER NOT NULL, dt_pagamento TEXT NOT NULL, vl_parcela REAL NOT NULL, FOREIGN KEY(cd_contadespeza) REFERENCES tb_contas(id_conta), FOREIGN KEY(cd_contareceita) REFERENCES tb_contas(id_conta))']
+            sql: ['CREATE TABLE tb_pagamentos (id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT, cd_contadespeza INTEGER NOT NULL, cd_contareceita INTEGER NOT NULL, dt_pagamento TEXT NOT NULL, vl_parcela REAL NOT NULL, FOREIGN KEY(cd_contadespeza) REFERENCES tb_lancamentos(id_lancamento), FOREIGN KEY(cd_contareceita) REFERENCES tb_lancamentos(id_lancamento))']
         }];
 
         db.transaction(function (txn) {

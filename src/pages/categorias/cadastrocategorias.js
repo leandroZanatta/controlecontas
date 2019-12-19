@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Form, Item, Label, Input, Content, Button, Text, Footer } from 'native-base';
+import { Container, Form, Item, Label, Input, Content, Button, Text, Footer } from 'native-base';
 import { salvarCategoria } from '../../services/categorias/categorias';
+import ReturnMenu from '../../components/menu/returnmenu';
 
 export default class CadastroCategorias extends React.Component {
 
@@ -13,21 +14,10 @@ export default class CadastroCategorias extends React.Component {
         };
     }
 
-    goBack = () => {
-        this.props.navigation.navigate('Categorias');
-    }
-
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={this.goBack} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Cadastrar Categoria</Title>
-                    </Body>
-                </Header>
+                <ReturnMenu title='Cadastro de Categoria' backTo='Categorias' navigation={this.props.navigation} />
                 <Content >
                     <Form>
                         <Item stackedLabel>
@@ -40,7 +30,7 @@ export default class CadastroCategorias extends React.Component {
                     </Form>
                 </Content>
                 <Footer>
-                    <Button onPress={() => salvarCategoria(this.state, this.goBack)}>
+                    <Button onPress={() => salvarCategoria(this.state, () => this.props.navigation.navigate('Categorias'))}>
                         <Text>Salvar</Text>
                     </Button>
                 </Footer>

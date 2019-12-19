@@ -18,53 +18,17 @@ export default class Contas extends React.Component {
 
     componentDidMount() {
 
-        buscarContas(this.adicionarContas);
-    }
-
-    adicionarContas = (contas) => {
-
-        this.setState({
-            items: contas,
-        });
-    }
-
-    editarConta = (item) => {
-
-        this.props.navigation.navigate('CadastroContas', item)
+        buscarContas((contas) => this.setState({ items: contas }));
     }
 
     onEditConta(data, rowMap) {
 
-        buscarContas(this.adicionarContas)
+        buscarContas((contas) => this.setState({ items: contas }))
 
         if (rowMap[data.index]) {
             rowMap[data.index].closeRow()
         }
     }
-
-    excluir = (data, rowMap) => {
-
-        let me = this;
-
-        const onEdit = function (result) { me.onEditConta(data, rowMap) };
-
-        excluirConta(data.item, onEdit);
-    }
-
-    reincluir = (data, rowMap) => {
-
-        let me = this;
-
-        const onEdit = function (result) { me.onEditConta(data, rowMap) };
-
-        reincluirConta(data.item, onEdit);
-    }
-
-    ListViewItemSeparator = () => {
-        return (
-            <View style={{ height: 0.5, width: '100%', backgroundColor: '#CCC' }} />
-        );
-    };
 
     montarOpcoesEsquerda = (data, rowMap) => {
 
@@ -72,7 +36,7 @@ export default class Contas extends React.Component {
             return (
                 <View >
                     <Button light
-                        onPress={() => this.excluir(data, rowMap)}>
+                        onPress={() => excluirConta(data.item, () => { this.onEditConta(data, rowMap) })}>
                         <Icon name='trash' />
                     </Button>
                 </View>
@@ -81,7 +45,7 @@ export default class Contas extends React.Component {
 
         return (<View >
             <Button light
-                onPress={() => this.reincluir(data, rowMap)}>
+                onPress={() => reincluirConta(data.item, (result) => { this.onEditConta(data, rowMap) })}>
                 <Icon name='done-all' />
             </Button>
         </View>
@@ -96,7 +60,6 @@ export default class Contas extends React.Component {
                     <SwipeListView
                         useFlatList={true}
                         data={this.state.items}
-                        ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View
@@ -104,11 +67,14 @@ export default class Contas extends React.Component {
                                 style={{
                                     backgroundColor: '#FFF',
                                     borderLeftColor: item.tipoConta == 0 ? 'red' : 'blue',
-                                    borderLeftWidth: 5
+                                    borderLeftWidth: 5,
+                                    height: 50,
+                                    borderBottomWidth: 0.5,
+                                    borderBottomColor: '#FAFAFA'
                                 }}>
                                 <Button
                                     style={{ backgroundColor: '#FFF' }}
-                                    onPress={() => this.editarConta(item)}>
+                                    onPress={() => this.props.navigation.navigate('CadastroContas', item)}>
                                     <Text
                                         style={{ color: '#000' }}
                                     > {item.descricao}</Text>

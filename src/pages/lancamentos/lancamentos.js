@@ -19,17 +19,7 @@ export default class Lancamentos extends React.Component {
 
     componentDidMount() {
 
-        buscarLancamentos(this.adicionarLancamentos);
-    }
-
-    adicionarLancamentos = (lancamentos) => {
-
-        this.setState({ items: lancamentos });
-    }
-
-    excluir = (item) => {
-
-        excluirLancamento(item, () => { buscarLancamentos(this.adicionarLancamentos) })
+        buscarLancamentos((lancamentos) => this.setState({ items: lancamentos }));
     }
 
     formatarLancamento = (item) => {
@@ -40,12 +30,6 @@ export default class Lancamentos extends React.Component {
         return moment(item.dt_lancamento, 'YYYY-MM-DD HH:mm:ss').format('DD/MM');
     }
 
-    ListViewItemSeparator = () => {
-        return (
-            <View style={{ height: 0.5, width: '100%', backgroundColor: '#CCC' }} />
-        );
-    };
-
     render() {
         return (
             <Container>
@@ -54,17 +38,18 @@ export default class Lancamentos extends React.Component {
                     <SwipeListView
                         useFlatList={true}
                         data={this.state.items}
-                        ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View key={item.id_conta}
                                 style={{
                                     backgroundColor: 'white',
-                                    paddingTop: 20,
-                                    paddingBottom: 20,
                                     borderLeftColor: item.cd_tipoconta == 0 ? 'red' : 'blue',
                                     borderLeftWidth: 5,
-                                    flexDirection: 'row'
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    height: 50,
+                                    borderBottomWidth: 0.5,
+                                    borderBottomColor: '#FAFAFA'
                                 }}>
                                 <Text> {this.formatarLancamento(item)}</Text>
                                 <Text style={{
@@ -73,6 +58,10 @@ export default class Lancamentos extends React.Component {
                                 <Text style={{
                                     marginRight: 10
                                 }}> {item.vl_parcela}</Text>
+
+                                <Text style={{
+                                    marginRight: 10
+                                }}> {item.vl_pago}</Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
@@ -84,10 +73,10 @@ export default class Lancamentos extends React.Component {
                                 justifyContent: 'space-between'
                             }}>
                                 <Button light
-                                    onPress={() => this.excluir(data.item)}>
+                                    onPress={() => excluirLancamento(data.item, () => { buscarLancamentos((lancamentos) => this.setState({ items: lancamentos })) })}>
                                     <Icon name='trash' />
                                 </Button>
-                                {data.item.cd_tipoconta === 0 &&
+                                {data.item.cd_tipoconta === 0 && data.item.vl_parcela > data.item.vl_pago &&
                                     <View >
                                         <Button light
                                             onPress={() => this.props.navigation.navigate('CadastroPagamentos', data.item)}>

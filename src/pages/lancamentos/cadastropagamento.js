@@ -1,84 +1,48 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
+import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
 import MoneyInput from '../../components/money/moneyinput';
-import moment from 'moment';
 import DatePicker from 'react-native-datepicker'
-
-const db = openDatabase({ name: 'controlecontas.db' });
+import { buscarLancamentosParaPagamento } from '../../services/lancamentos/lancamentos';
+import { salvarPagamento } from '../../services/pagamentos/pagamentos';
+import ReturnMenu from '../../components/menu/returnmenu';
 
 
 export default class CadastroPagamentos extends React.Component {
 
     constructor(props) {
         super(props);
-       
+
         this.state = {
             contas: [],
             id: null,
             contareceita: null,
-            contadespeza: props.navigation.getParam('cd_conta'),
-            valor: props.navigation.getParam('vl_parcela'),
+            contadespeza: props.navigation.getParam('id_lancamento'),
+            valor: props.navigation.getParam('vl_parcela') - props.navigation.getParam('vl_pago'),
             dataPagamento: new Date()
         }
     }
 
     componentDidMount() {
 
-        db.transaction(tx => {
+        buscarLancamentosParaPagamento(this.adicionarLancamentos);
+    }
 
-            tx.executeSql('SELECT * FROM tb_contas where cd_tipoconta=1', [], (tx, results) => {
-                var temp = [];
+    adicionarLancamentos = (lancamentos) => {
 
-
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-
-                this.setState({
-                    contas: temp,
-                });
-            });
-        });
-
+        this.setState({ contas: lancamentos });
     }
 
     cadastrarPagamento = () => {
 
-        let navigation = this.props.navigation;
+        const callbackSucess = () => { this.props.navigation.navigate('Lancamentos') };
 
-        const { id } = this.state;
-        const { contadespeza } = this.state;
-        const { contareceita } = this.state;
-        const { dataPagamento } = this.state;
-        const { valor } = this.state;
-
-        db.transaction(tx => {
-
-            let sql = 'insert into tb_pagamentos(id_pagamento, cd_contadespeza, cd_contareceita, dt_pagamento, vl_parcela) values(?,?,?,?,?)';
-            const params = [id, contadespeza, contareceita, moment(dataPagamento, 'YYYY-MM-DD').format('YYYY-MM-DD HH:mm:ss'), valor];
-
-            tx.executeSql(sql, params, (tx, results) => {
-                navigation.navigate('Lancamentos');
-            }, function (error) {
-                alert(error);
-            });
-        });
+        salvarPagamento(this.state, callbackSucess)
     }
-
-
 
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={() => this.props.navigation.navigate('Lancamentos')} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Lançar Pagamento</Title>
-                    </Body>
-                </Header>
+                <ReturnMenu title="Lançar Pagamento" backTo='Lancamentos' navigation={this.props.navigation} />
                 <Content>
                     <Form>
 
@@ -93,7 +57,7 @@ export default class CadastroPagamentos extends React.Component {
                             >
                                 {
                                     this.state.contas.map(conta => {
-                                        return (<Picker.Item label={conta.tx_descricao} value={conta.id_conta} key={conta.id_conta} />)
+                                        return (<Picker.Item label={conta.descricao} value={conta.id} key={conta.id} />)
                                     })
 
                                 }

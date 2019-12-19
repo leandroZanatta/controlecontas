@@ -15,17 +15,18 @@ export default class Categorias extends React.Component {
         };
     }
 
-    adicionarCategorias = (categorias) => {
-
-        this.setState({
-            items: categorias,
-        });
-
-    }
-
     componentDidMount() {
 
-        buscarCategorias(this.adicionarCategorias);
+        buscarCategorias((categorias) => { this.setState({ items: categorias }) });
+    }
+
+    onEditCategoria(data, rowMap) {
+
+        buscarCategorias((categorias) => { this.setState({ items: categorias }) })
+
+        if (rowMap[data.index]) {
+            rowMap[data.index].closeRow()
+        }
     }
 
     montarOpcoesEsquerda = (data, rowMap) => {
@@ -34,7 +35,7 @@ export default class Categorias extends React.Component {
             return (
                 <View >
                     <Button light
-                        onPress={() => this.excluir(data, rowMap)}>
+                        onPress={() => excluirCategoria(data.item, () => { this.onEditCategoria(data, rowMap) })}>
                         <Icon name='trash' />
                     </Button>
                 </View>
@@ -44,51 +45,12 @@ export default class Categorias extends React.Component {
         return (
             <View >
                 <Button light
-                    onPress={() => this.reincluir(data, rowMap)}>
+                    onPress={() => reincluirCategoria(data.item, () => { this.onEditCategoria(data, rowMap) })}>
                     <Icon name='done-all' />
                 </Button>
             </View>
         );
     }
-
-    onEditCategoria(data, rowMap) {
-
-        buscarCategorias(this.adicionarCategorias)
-
-        if (rowMap[data.index]) {
-            rowMap[data.index].closeRow()
-        }
-    }
-
-
-    excluir = (data, rowMap) => {
-
-        let me = this;
-
-        const onEdit = function (result) { me.onEditCategoria(data, rowMap) };
-
-        excluirCategoria(data.item, onEdit);
-    }
-
-    reincluir = (data, rowMap) => {
-
-        let me = this;
-
-        const onEdit = function (result) { me.onEditCategoria(data, rowMap) };
-
-        reincluirCategoria(data.item, onEdit);
-    }
-
-    editarCategoria = (item) => {
-
-        this.props.navigation.navigate('CadastroCategorias', item)
-    }
-
-    ListViewItemSeparator = () => {
-        return (
-            <View style={{ height: 0.5, width: '100%', backgroundColor: '#CCC' }} />
-        );
-    };
 
     render() {
         return (
@@ -97,14 +59,13 @@ export default class Categorias extends React.Component {
                 <View style={{ flex: 1 }}>
                     <SwipeListView
                         data={this.state.items}
-                        ItemSeparatorComponent={this.ListViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <View>
+                            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#FAFAFA' }}>
                                 <Button
                                     key={item.id}
-                                    style={{ backgroundColor: '#FFF', padding: 20 }}
-                                    onPress={() => this.editarCategoria(item)}>
+                                    style={{ backgroundColor: '#FFF', padding: 20, height: 50 }}
+                                    onPress={() => this.props.navigation.navigate('CadastroCategorias', item)}>
                                     <Text> {item.descricao}</Text>
                                 </Button>
                             </View>

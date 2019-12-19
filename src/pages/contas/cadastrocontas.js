@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Body, Header, Left, Title, Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, Input } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
+import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, Input } from 'native-base';
 import { salvarConta } from '../../services/contas/contas';
 import { buscarCategorias } from '../../services/categorias/categorias';
-const db = openDatabase({ name: 'controlecontas.db' });
+import ReturnMenu from '../../components/menu/returnmenu';
 
 export default class CadastroContas extends React.Component {
 
     constructor(props) {
+
         super(props);
 
         let tipoConta = props.navigation.getParam('tipoConta');
@@ -21,58 +21,15 @@ export default class CadastroContas extends React.Component {
         }
     }
 
-    adicionarCategorias = (categorias) => {
-
-        this.setState({
-            categorias: categorias,
-        });
-
-    }
-
     componentDidMount() {
 
-        buscarCategorias(this.adicionarCategorias);
+        buscarCategorias((categorias) => this.setState({ categorias: categorias }));
     }
 
-    cadastrarReceita = () => {
-
-        let navigation = this.props.navigation;
-
-        db.transaction(tx => {
-
-            const { id } = this.state;
-            const { descricao } = this.state;
-            const { categoria } = this.state;
-            const { tipoConta } = this.state;
-
-            let sql = 'insert into tb_contas(id_conta, cd_tipoconta, cd_categoria, tx_descricao) values(?,?,?,?)';
-            const params = [id, tipoConta, categoria, descricao];
-
-            if (this.state.id) {
-                sql = 'update tb_categorias set tx_descricao=?,cd_tipoconta,cd_categoria where id_conta=?';
-                params = [descricao, tipoConta, categoria, id]
-            }
-
-            tx.executeSql(sql, params, (tx, results) => {
-                navigation.navigate('Contas');
-            }, function (error) { alert(errorr); });
-        });
-    }
-
-    goBack = () => {
-        this.props.navigation.navigate('Contas');
-    }
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Icon color='#FFF' fontSize='40' name="arrow-back" onPress={this.goBack} />
-                    </Left>
-                    <Body style={{ flex: 1 }}>
-                        <Title>Receita</Title>
-                    </Body>
-                </Header>
+                <ReturnMenu title='Cadastro de Conta' backTo='Contas' navigation={this.props.navigation} />
                 <Content>
                     <Form>
                         <Item picker>
@@ -118,7 +75,7 @@ export default class CadastroContas extends React.Component {
                     </Form>
                 </Content>
                 <Footer>
-                    <Button onPress={() => salvarConta(this.state, this.goBack)}>
+                    <Button onPress={() => salvarConta(this.state, () => this.props.navigation.navigate('Contas'))}>
                         <Text>Salvar</Text>
                     </Button>
                 </Footer>

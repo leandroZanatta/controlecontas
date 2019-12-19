@@ -19,8 +19,8 @@ export function buscarContaDB(callbackSucess, callbackError) {
 
 export function buscarReceitasDB(callbackSucess, callbackError) {
 
-    sql = 'SELECT id_conta as id, cd_categoria as categoria, cd_tipoconta as tipoConta, tx_descricao as descricao, dt_exclusao as exclusao FROM tb_contas order by cd_tipoconta desc, tx_descricao asc';
-    params = []
+    sql = 'SELECT * FROM tb_contas where cd_tipoconta=?';
+    params = [1]
 
     executeSelect(sql, params, callbackSucess, callbackError);
 }
