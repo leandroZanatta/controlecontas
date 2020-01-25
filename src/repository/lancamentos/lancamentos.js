@@ -75,3 +75,32 @@ editarDespeza = (parcelas, callbackSucess, callbackError) => {
     execute(sql, parcelas[0], callbackSucess, callbackError);
 }
 
+export function buscarTransacoesPorData(dataInicio, dataFim, callbackSucess, callbackError) {
+
+    sql = 'select lancamentos.id_lancamento as idLancamento,' +
+        'categorias.tx_descricao as descricaoCategoria,	' +
+        'contas.cd_categoria as categoria, ' +
+        'contas.cd_tipoconta as tipoConta, ' +
+        'contas.tx_descricao as descricaoConta, ' +
+        'lancamentos.cd_conta as conta,	' +
+        'lancamentos.dt_vencimento as dataVencimento, ' +
+        'lancamentos.dt_lancamento as dataLancamento, ' +
+        'lancamentos.dt_lancamento as dataLancamento,	' +
+        'lancamentos.dt_vencimento as dataVencimento, ' +
+        'lancamentos.vl_parcela as valorParcela ' +
+        'from	tb_lancamentos lancamentos ' +
+        'inner join tb_contas contas on	lancamentos.cd_conta = contas.id_conta ' +
+        'inner join tb_categorias categorias on	contas.cd_categoria = categorias.id_categoria ' +
+        'WHERE ' +
+        '(lancamentos.dt_lancamento BETWEEN ? and ? ' +
+        'and contas.cd_tipoconta = 1)' +
+        'or (lancamentos.dt_vencimento BETWEEN ? and ? ' +
+        'and contas.cd_tipoconta = 0)';
+
+    let strDtInicio = moment(dataInicio).format('YYYY-MM-DD') + ' 00:00:00';
+    let strDtFim = moment(dataFim).format('YYYY-MM-DD') + ' 23:59:59';
+
+    params = [strDtInicio, strDtFim, strDtInicio, strDtFim]
+
+    executeSelect(sql, params, callbackSucess, callbackError);
+}

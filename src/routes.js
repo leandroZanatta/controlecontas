@@ -10,6 +10,8 @@ import Lancamentos from './pages/lancamentos/lancamentos';
 import CadastroReceitas from './pages/lancamentos/cadastroreceitas';
 import CadastroDespesas from './pages/lancamentos/cadastrodespesas';
 import CadastroPagamentos from './pages/lancamentos/cadastropagamento';
+import Icones from './pages/icones/icones';
+import Detalhamento from './pages/home/detalhamento';
 
 const CategoriasNavigator = createSwitchNavigator({
     Categorias: Categorias,
@@ -23,16 +25,21 @@ const ContasNavigator = createSwitchNavigator({
 
 const LancamentosNavigator = createSwitchNavigator({
     Lancamentos: Lancamentos,
-    CadastroReceitas: CadastroReceitas, 
+    CadastroReceitas: CadastroReceitas,
     CadastroDespesas: CadastroDespesas,
     CadastroPagamentos: CadastroPagamentos
 });
 
-const AppDrawerNavigator = createDrawerNavigator({
+const HomeNavigator = createSwitchNavigator({
     Home: Home,
+    Detalhamento: Detalhamento
+});
+const AppDrawerNavigator = createDrawerNavigator({
+    Home: HomeNavigator,
     Categorias: CategoriasNavigator,
     Contas: ContasNavigator,
-    Lançamentos: LancamentosNavigator
+    Lançamentos: LancamentosNavigator,
+    Icones: Icones
 }, {
     contentComponent: SideMenu
 });
