@@ -5,6 +5,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import moment from 'moment';
 import HeaderMenu from '../../components/menu/headermenu';
 import { buscarLancamentos, excluirLancamento } from '../../services/lancamentos/lancamentos';
+import { formatarMoeda } from '../../services/util';
 
 export default class Lancamentos extends React.Component {
 
@@ -57,11 +58,11 @@ export default class Lancamentos extends React.Component {
                                 }}> {item.tx_descricao}</Text>
                                 <Text style={{
                                     marginRight: 10
-                                }}> {item.vl_parcela}</Text>
+                                }}> {formatarMoeda(item.valorParcela)}</Text>
 
                                 <Text style={{
                                     marginRight: 10
-                                }}> {item.vl_pago}</Text>
+                                }}> {formatarMoeda(item.valorPago)}</Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
@@ -76,7 +77,7 @@ export default class Lancamentos extends React.Component {
                                     onPress={() => excluirLancamento(data.item, () => { buscarLancamentos((lancamentos) => this.setState({ items: lancamentos })) })}>
                                     <Icon name='trash' />
                                 </Button>
-                                {data.item.cd_tipoconta === 0 && data.item.vl_parcela > data.item.vl_pago &&
+                                {data.item.cd_tipoconta === 0 && data.item.valorParcela > data.item.valorPago &&
                                     <View >
                                         <Button light
                                             onPress={() => this.props.navigation.navigate('CadastroPagamentos', data.item)}>

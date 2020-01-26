@@ -3,7 +3,7 @@ import moment from 'moment';
 
 export function buscarLancamentosDB(callbackSucess, callbackError) {
 
-    sql = 'SELECT lancamentos.id_lancamento,lancamentos.dt_vencimento,lancamentos.dt_lancamento,lancamentos.cd_conta,contas.cd_tipoconta,contas.tx_descricao,lancamentos.vl_parcela,coalesce(case when contas.cd_tipoconta = 1 then sum(recebimentos.vl_parcela) else sum(pagamentos.vl_parcela) END,0) as vl_pago FROM tb_lancamentos lancamentos left join tb_contas contas on lancamentos.cd_conta = contas.id_conta	left join tb_pagamentos pagamentos on	lancamentos.id_lancamento = pagamentos.cd_contadespeza and contas.cd_tipoconta = 0 left join tb_pagamentos recebimentos on	lancamentos.id_lancamento = recebimentos.cd_contareceita and contas.cd_tipoconta = 1	group by lancamentos.dt_vencimento,lancamentos.dt_lancamento,contas.cd_tipoconta,contas.tx_descricao,lancamentos.cd_conta,lancamentos.vl_parcela';
+    sql = 'SELECT lancamentos.id_lancamento,lancamentos.dt_vencimento,lancamentos.dt_lancamento,lancamentos.cd_conta,contas.cd_tipoconta,contas.tx_descricao,lancamentos.vl_parcela as valorParcela,coalesce(case when contas.cd_tipoconta = 1 then sum(recebimentos.vl_parcela) else sum(pagamentos.vl_parcela) END,0) as valorPago FROM tb_lancamentos lancamentos left join tb_contas contas on lancamentos.cd_conta = contas.id_conta	left join tb_pagamentos pagamentos on	lancamentos.id_lancamento = pagamentos.cd_contadespeza and contas.cd_tipoconta = 0 left join tb_pagamentos recebimentos on	lancamentos.id_lancamento = recebimentos.cd_contareceita and contas.cd_tipoconta = 1	group by lancamentos.dt_vencimento,lancamentos.dt_lancamento,contas.cd_tipoconta,contas.tx_descricao,lancamentos.cd_conta,lancamentos.vl_parcela HAVING valorParcela - valorPago > 0';
     params = []
 
     executeSelect(sql, params, callbackSucess, callbackError);
@@ -11,8 +11,8 @@ export function buscarLancamentosDB(callbackSucess, callbackError) {
 
 export function buscarLancamentosParaPagamentoDB(callbackSucess, callbackError) {
 
-    sql = 'SELECT lancamentos.id_lancamento as id, contas.tx_descricao as descricao FROM tb_lancamentos lancamentos inner join tb_contas contas on lancamentos.cd_conta=contas.id_conta where cd_tipoconta=?';
-    params = [1]
+    sql = 'SELECT lancamentos.id_lancamento as id, contas.tx_descricao as descricao, lancamentos.vl_parcela- coalesce(sum(pagamento.vl_parcela),0) as saldo FROM tb_lancamentos lancamentos inner join tb_contas contas on lancamentos.cd_conta = contas.id_conta left join tb_pagamentos pagamento on pagamento.cd_contareceita = contas.id_conta where cd_tipoconta = 1 group by	lancamentos.id_lancamento,	contas.tx_descricao	HAVING saldo > 0';
+    params = []
 
     executeSelect(sql, params, callbackSucess, callbackError);
 }

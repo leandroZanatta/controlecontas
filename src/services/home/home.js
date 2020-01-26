@@ -57,7 +57,7 @@ criarCallback = (lancamentos, pagamentos) => {
 
     const totalPagamentos = pagamentos.reduce(funcaoSoma, 0);
 
-    const gastosCategorias = groupBy(lancamentos, (c) => c.descricaoCategoria, (prevVal, elem) => prevVal + elem.valorParcela);
+    const gastosCategorias = groupBy(lancamentos.filter(lancamento => lancamento.tipoConta === 0), (c) => c.descricaoCategoria, (prevVal, elem) => prevVal + elem.valorParcela);
 
     return {
         receitas: totalReceitas,

@@ -61,7 +61,7 @@ export default class Home extends React.Component {
                 <View>
                     <Filtros funcaoFiltar={this.filtrarResultados} />
                     <ScrollView scrollEnabled={true}>
-                        <Collapse>
+                        <Collapse isCollapsed={true}>
                             <CollapseHeader >
                                 <Separator style={styles.collapseSeparator} bordered>
                                     <Text style={styles.collapseTitle}>Lançamentos</Text>
@@ -84,16 +84,9 @@ export default class Home extends React.Component {
                                     </View>
 
                                 </View>
-                            </CollapseBody>
-                        </Collapse>
 
-                        <Collapse>
-                            <CollapseHeader>
-                                <Separator style={styles.collapseSeparator} bordered>
-                                    <Text style={styles.collapseTitle}>Pagamentos</Text>
-                                </Separator>
-                            </CollapseHeader>
-                            <CollapseBody>
+                                <Text style={styles.collapseTitle}>Pagamentos</Text>
+
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ borderWidth: 1, padding: 5, flex: 1 }}>
                                         <Text>Despezas</Text>

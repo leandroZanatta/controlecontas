@@ -1,6 +1,6 @@
 export function formatarMoeda(value, moneyFormat = '') {
 
-    let valor = value.toString().split('.');
+    let valor = value.toFixed(2).toString().split('.');
 
     if (valor.length < 2) {
         valor.push('00');

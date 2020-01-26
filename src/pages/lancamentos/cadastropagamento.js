@@ -17,7 +17,7 @@ export default class CadastroPagamentos extends React.Component {
             id: null,
             contareceita: null,
             contadespeza: props.navigation.getParam('id_lancamento'),
-            valor: props.navigation.getParam('vl_parcela') - props.navigation.getParam('vl_pago'),
+            valor: props.navigation.getParam('valorParcela') - props.navigation.getParam('valorPago'),
             dataPagamento: new Date()
         }
     }
