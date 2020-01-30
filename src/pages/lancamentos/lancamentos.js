@@ -62,7 +62,8 @@ export default class Lancamentos extends React.Component {
 
                                 <Text style={{
                                     marginRight: 10
-                                }}> {formatarMoeda(item.valorPago)}</Text>
+                                }}> {formatarMoeda(item.valorPago)}
+                                </Text>
                             </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (

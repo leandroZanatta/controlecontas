@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker } from 'native-base';
-import { openDatabase } from 'react-native-sqlite-storage';
 import MoneyInput from '../../components/money/moneyinput';
-import moment from 'moment';
 import ReturnMenu from '../../components/menu/returnmenu';
 import { buscarReceitas } from '../../services/contas/contas';
 import { cadastrarReceita } from '../../services/lancamentos/lancamentos';
-
-const db = openDatabase({ name: 'controlecontas.db' });
-
+import DatePicker from 'react-native-datepicker';
+import { formatarMoeda } from '../../services/util';
+import { Dimensions } from 'react-native';
 
 export default class CadastroReceitas extends React.Component {
 
@@ -17,7 +15,7 @@ export default class CadastroReceitas extends React.Component {
 
         this.state = {
             contas: [],
-            dataLancamento: { date: new Date() },
+            dataLancamento: new Date(),
             valor: 0,
             id: null,
             conta: 0
@@ -44,18 +42,19 @@ export default class CadastroReceitas extends React.Component {
     }
 
     render() {
+        const widthDate = parseInt((Dimensions.get('window').width - 120));
+
         return (
             <Container>
                 <ReturnMenu title='Lançar Receita' backTo='Lancamentos' navigation={this.props.navigation} />
                 <Content>
                     <Form>
-
                         <Item picker>
                             <Label>Conta</Label>
                             <Picker
                                 mode="dropdown"
                                 iosIcon={<Icon name="arrow-down" />}
-                                style={{ width: undefined }}
+                                style={{ width: widthDate }}
                                 selectedValue={this.state.conta}
                                 onValueChange={(e) => this.setState({ conta: e })}
                             >
@@ -66,6 +65,23 @@ export default class CadastroReceitas extends React.Component {
                                 }
 
                             </Picker>
+                        </Item>
+                        <Item>
+                            <Label>Lancamento</Label>
+                            <DatePicker
+                                style={{ width: widthDate }}
+                                date={this.state.dataLancamento}
+                                mode="date"
+                                placeholder="Selecione uma data"
+                                format="DD/MM/YYYY"
+                                customStyles={{
+                                    dateIcon: {
+                                        position: 'relative',
+                                        marginLeft: 4
+                                    },
+                                }}
+                                onDateChange={(date) => { this.setState({ dataLancamento: date }) }}
+                            />
                         </Item>
                         <Item stackedLabel>
                             <Label>Valor</Label>

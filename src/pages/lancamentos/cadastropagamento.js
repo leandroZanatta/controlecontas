@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
+import { Container, Content, Footer, Button, Text, Form, Item, Label, Picker } from 'native-base';
 import MoneyInput from '../../components/money/moneyinput';
 import DatePicker from 'react-native-datepicker'
 import { buscarLancamentosParaPagamento } from '../../services/lancamentos/lancamentos';
 import { salvarPagamento } from '../../services/pagamentos/pagamentos';
 import ReturnMenu from '../../components/menu/returnmenu';
+import { formatarMoeda } from '../../services/util';
 
 
 export default class CadastroPagamentos extends React.Component {
@@ -15,9 +16,10 @@ export default class CadastroPagamentos extends React.Component {
         this.state = {
             contas: [],
             id: null,
-            contareceita: null,
+            contareceita: undefined,
             contadespeza: props.navigation.getParam('id_lancamento'),
             valor: props.navigation.getParam('valorParcela') - props.navigation.getParam('valorPago'),
+            valorPago: props.navigation.getParam('valorParcela') - props.navigation.getParam('valorPago'),
             dataPagamento: new Date()
         }
     }
@@ -34,9 +36,16 @@ export default class CadastroPagamentos extends React.Component {
 
     cadastrarPagamento = () => {
 
-        const callbackSucess = () => { this.props.navigation.navigate('Lancamentos') };
+        const callbackError = (error) => alert(error);
 
-        salvarPagamento(this.state, callbackSucess)
+        const callbackSucess = () => this.props.navigation.navigate('Lancamentos');
+
+        salvarPagamento(this.state, callbackSucess, callbackError);
+    }
+
+    changeReceita = (contareceita) => {
+
+        this.setState({ contareceita })
     }
 
     render() {
@@ -45,21 +54,16 @@ export default class CadastroPagamentos extends React.Component {
                 <ReturnMenu title="Lançar Pagamento" backTo='Lancamentos' navigation={this.props.navigation} />
                 <Content>
                     <Form>
-
                         <Item picker>
                             <Label>Conta</Label>
                             <Picker
-                                mode="dropdown"
-                                iosIcon={<Icon name="arrow-down" />}
-                                style={{ width: undefined }}
                                 selectedValue={this.state.contareceita}
-                                onValueChange={(e) => this.setState({ contareceita: e })}
+                                onValueChange={this.changeReceita.bind(this)}
                             >
                                 {
                                     this.state.contas.map(conta => {
-                                        return (<Picker.Item label={conta.descricao} value={conta.id} key={conta.id} />)
+                                        return (<Picker.Item label={conta.descricao + ' - ' + formatarMoeda(conta.saldo, 'R$')} value={conta.id} key={conta.id} />)
                                     })
-
                                 }
 
                             </Picker>
@@ -85,8 +89,8 @@ export default class CadastroPagamentos extends React.Component {
                         <Item stackedLabel>
                             <Label>Valor</Label>
                             <MoneyInput
-                                value={this.state.valor}
-                                onMoneyChange={(valor) => this.setState({ valor })}
+                                value={this.state.valorPago}
+                                onMoneyChange={(valorPago) => this.setState({ valorPago })}
                             />
                         </Item>
                     </Form>

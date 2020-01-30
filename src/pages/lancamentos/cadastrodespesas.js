@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Icon, Container, Content, Footer, Button, Text, Form, Item, Label, Picker, CheckBox, Input } from 'native-base';
 import MoneyInput from '../../components/money/moneyinput';
-import moment from 'moment';
 import DatePicker from 'react-native-datepicker';
 import { buscarDespezas } from '../../services/contas/contas';
 import { cadastrarDespezas } from '../../services/lancamentos/lancamentos';
 import ReturnMenu from '../../components/menu/returnmenu';
-
-
 
 export default class CadastroDespesas extends React.Component {
 
@@ -19,9 +16,6 @@ export default class CadastroDespesas extends React.Component {
             dataLancamento: new Date(),
             dataVencimento: new Date(),
             valor: 0,
-            parcelado: false,
-            numeroParcelas: '1',
-            diasParcela: '30',
             id: null,
             conta: 0
         }
@@ -35,46 +29,7 @@ export default class CadastroDespesas extends React.Component {
 
     cadastrarDespesa = () => {
 
-        cadastrarDespezas(this.cadastrarValorDespesa(), () => this.props.navigation.navigate('Lancamentos'));
-    }
-
-    cadastrarValorDespesa = () => {
-
-        const { dataVencimento } = this.state;
-        const { parcelado } = this.state;
-        const { numeroParcelas } = this.state;
-        const { diasParcela } = this.state;
-
-        let parcelas = [];
-
-        if (parcelado) {
-
-            let dataVencimentoParcela = dataVencimento;
-
-            for (let i = 0; i < numeroParcelas; i++) {
-
-                parcelas.push(this.createParcelas(dataVencimentoParcela));
-
-                dataVencimentoParcela.setDate(dataVencimentoParcela.getDate() + parseInt(diasParcela));
-            }
-
-            return parcelas;
-        }
-
-        parcelas.push(this.createParcelas(dataVencimento));
-
-        return parcelas;
-    }
-
-    createParcelas = (dataVencimentoParcela) => {
-
-        return [
-            this.state.id,
-            this.state.conta,
-            moment(this.state.dataLancamento).format('YYYY-MM-DD HH:mm:ss'),
-            moment(dataVencimentoParcela, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss'),
-            this.state.valor
-        ]
+        cadastrarDespezas(this.state, () => this.props.navigation.navigate('Lancamentos'));
     }
 
     render() {
@@ -83,7 +38,6 @@ export default class CadastroDespesas extends React.Component {
                 <ReturnMenu title='Lançar Despesa' backTo='Lancamentos' navigation={this.props.navigation} />
                 <Content>
                     <Form>
-
                         <Item picker>
                             <Label>Conta</Label>
                             <Picker
@@ -121,34 +75,6 @@ export default class CadastroDespesas extends React.Component {
                             <Label>Valor</Label>
                             <MoneyInput
                                 onMoneyChange={(valor) => this.setState({ valor })}
-                            />
-                        </Item>
-                        <Item stackedLabel>
-                            <Label>Parcelado?</Label>
-                            <CheckBox
-                                checked={this.state.parcelado}
-                                color="gray"
-                                onPress={() => this.setState({ parcelado: !this.state.parcelado })}
-                            />
-                        </Item>
-                        <Item stackedLabel>
-                            <Label>Parcelas</Label>
-                            <Input
-                                numeric
-                                value={this.state.numeroParcelas}
-                                disabled={!this.state.parcelado}
-                                keyboardType={'numeric'}
-                                onChange={(e) => this.setState({ numeroParcelas: e.nativeEvent.text })}
-                            />
-                        </Item>
-                        <Item stackedLabel>
-                            <Label>Dias</Label>
-                            <Input
-                                numeric
-                                value={this.state.diasParcela}
-                                disabled={!this.state.parcelado}
-                                keyboardType={'numeric'}
-                                onChange={(e) => this.setState({ diasParcela: e.nativeEvent.text })}
                             />
                         </Item>
                     </Form>
