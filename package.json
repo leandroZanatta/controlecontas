@@ -16,7 +16,7 @@
     "native-base": "^2.13.8",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
-    "react-native": "0.61.5",
+    "react-native": "0.62.3",
     "react-native-chart-kit": "^4.1.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-fab": "^1.0.9",
